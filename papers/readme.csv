@@ -1,0 +1,10 @@
+Paper;Description;Dataset
+Suitability_of_Dysphonia_Measurements_for_Telemonitoring_of_Parkinsons_Disease;;https://archive.ics.uci.edu/dataset/174/parkinsons
+s41598-025-92105-6;;https://figshare.com/articles/dataset/Voice_Samples_for_Patients_with_Parkinson_s_Disease_and_Healthy_Controls/23849127
+2411.05793v2;Deep Learning Time Series State of the art;
+fneur-13-831428;Voice in Parkinson’s Disease: A Machine Learning Study (uniroma);
+s41598-023-42796-6;Computer aided progression detection model based on optimized deep LSTM ensemble model and the fusion of multivariate time series data (alzeimher);
+https://github.com/SJTU-YONGFU-RESEARCH-GRP/Parkinson-Patient-Speech-Dataset;uses spectrogram;
+https://github.com/mahesh989/Parkinson_Disease/tree/Data-Cleaning;spunto utile per versione tabulare;https://archive.ics.uci.edu/dataset/301/parkinson%2Bspeech%2Bdataset%2Bwith%2Bmultiple%2Btypes%2Bof%2BAudio%2Brecordings
+s41598-023-47568-w;;https://figshare.com/articles/dataset/Voice_Samples_for_Patients_with_Parkinson_s_Disease_and_Healthy_Controls/23849127
+Chapter1;Predictive models in the diagnosis of Parkinson’s disease through voice analysis (uses many raw audio dataset);
