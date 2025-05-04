@@ -27,6 +27,7 @@ project-root/
 Outputs
 -------
 artifacts/mel_specs/*.npy         - fixed-length (MAX_FRAMES, N_MELS) arrays
+artifacts/plots/*.png             - spectrogram plots (for debugging)
 artifacts/checkpoints/*.pt        - model weights (TODO)
 
 """
@@ -105,6 +106,7 @@ def cache_all(plot: bool = False):
             spec = load_and_preprocess(wav)
             np.save(out, spec)
             if plot:
+                PLOT_DIR.mkdir(parents=True, exist_ok=True)  # Ensure plot directory exists
                 plot_spectrogram(spec, wav)
     print("[cache_all] Spectrogram caching DONE")
 
@@ -117,7 +119,6 @@ def plot_spectrogram(spec: np.ndarray, wav: Path):
     plt.xlabel("Time (frames)")
     plt.ylabel("Mel bands")
     plt.tight_layout()
-    PLOT_DIR.mkdir(parents=True, exist_ok=True)
     plt.savefig(PLOT_DIR / f"{wav.stem}.png")
     plt.clf()
     plt.close()
