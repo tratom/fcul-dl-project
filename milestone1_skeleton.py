@@ -6,34 +6,40 @@ Group: Antonio Alampi (64316), Tommaso Tragno (64699), Cristian Tedesco (65149),
 
 This script pre-computes log-mel spectrograms from the raw wav files and
 provides a minimal PyTorch training skeleton with an LSTM classifier.
-Edit the hyper-parameters in the CONFIG section to explore variations,
-or swap out the model in LSTMAudioClassifier with more advanced
-architectures in later milestones.
+It will be possible to edit the hyper-parameters in the CONFIG section to explore variations,
+or swap out the model in **LSTMAudioClassifier** with more advanced architectures in later milestones.
 
 Usage
 -----
-$ python milestone1_skeleton.py            # first run - caches spectrograms
-$ python milestone1_skeleton.py --epochs 50  # quick experiment
+$ python milestone1_skeleton.py                 # first run - caches spectrograms
+Arguments
+-----
+    --epochs <int>   Number of epochs to train the model (default: 10)
+    --comments <str> Comments to be printed in the log (default: None)
+    --plot           Compute and save the spectrograms (default: False)
+    --help           Show this help message and exit
 
 Folder layout expected
 ----------------------
 project-root/
  ├─ data-source/
  │   └─ audio/
- │      ├─ HC_AH/   (41 wav)
- │      └─ PD_AH/   (40 wav)
+ │      ├─ HC_AH/   (Healthy Control - 41 wav)
+ │      └─ PD_AH/   (Parkinson's Disease - 40 wav)
  └─ milestone1_skeleton.py
+
+(NOTE: every wav filename starts with **AH** irrespective of class, so we embed the class label in the *cached* filename instead.)
 
 Outputs
 -------
-artifacts/mel_specs/*.npy         - fixed-length (MAX_FRAMES, N_MELS) arrays
-artifacts/plots/*.png             - spectrogram plots (for debugging)
-artifacts/checkpoints/*.pt        - model weights (TODO)
-
+artifacts/mel_specs/HC_*.npy or PD_*.npy - fixed-length (MAX_FRAMES, N_MELS)
+artifacts/plots/*.png                  - spectrogram plots (for debugging)
+artifacts/checkpoints/*.pt             - model weights (TODO)
 """
 from __future__ import annotations
 import argparse
 import os
+from datetime import datetime
 from pathlib import Path
 from typing import List, Tuple
 
@@ -54,8 +60,10 @@ N_MELS = 64
 HOP_LENGTH = 160          # 10 ms
 WIN_LENGTH = 400          # 25 ms
 FMIN = 50
-FMAX = 8_000
-MAX_FRAMES = 1_024        # ~10 s at 100 fps
+# FMAX = SAMPLE_RATE // 2  # Nyquist frequency
+# Since the original data is sampled at 8kHz, we should (?) set FMAX to a lower value
+FMAX = 4_000 # 8_000
+MAX_FRAMES = 1024          # ≈10 s at 100 fps
 RANDOM_SEED = 42
 BATCH_SIZE = 8
 NUM_WORKERS = os.cpu_count() or 2
@@ -64,7 +72,7 @@ NUM_WORKERS = os.cpu_count() or 2
 
 def list_wav_files() -> List[Tuple[Path, int]]:
     """Return list of (file_path, label) where label 0 = HC, 1 = PD."""
-    wavs = []
+    wavs: list[tuple[Path, int]] = []
     for label_name, label in [("HC_AH", 0), ("PD_AH", 1)]:
         for wav in (DATA_ROOT / label_name).glob("*.wav"):
             wavs.append((wav, label))
@@ -72,7 +80,7 @@ def list_wav_files() -> List[Tuple[Path, int]]:
 
 
 def load_and_preprocess(path: Path) -> np.ndarray:
-    """Load wav, compute log-mel spectrogram (time × n_mels)."""
+    """Load wav and compute a padded / truncated log-mel spectrogram (T × M)."""
     y, sr = librosa.load(path, sr=SAMPLE_RATE)
     y = librosa.util.normalize(y)
     melspec = librosa.feature.melspectrogram(
@@ -93,7 +101,9 @@ def load_and_preprocess(path: Path) -> np.ndarray:
         logmel = logmel[:MAX_FRAMES]
     else:
         pad = MAX_FRAMES - n_frames
-        logmel = np.pad(logmel, ((0, pad), (0, 0)), mode="constant")
+        # Pad with -80 dB (minimum value in librosa, which mean silence) instead of 0
+        # to avoid introducing artifacts in the spectrogram
+        logmel = np.pad(logmel, ((0, pad), (0, 0)), mode="constant", constant_values=-80.0)
     return logmel
 
 
@@ -101,25 +111,28 @@ def cache_all(plot: bool = False):
     """Pre-compute spectrograms once; safe to skip on subsequent runs."""
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     for wav, _ in list_wav_files():
-        out = CACHE_DIR / f"{wav.stem}.npy"
+        # Embed the class label (HC/PD) in the cached filename because the raw filename is class-agnostic (starts with AH)
+        label_prefix = wav.parent.name.split("_")[0]  # "HC" or "PD"
+        out = CACHE_DIR / f"{label_prefix}_{wav.stem}.npy"
         if not out.exists():
             spec = load_and_preprocess(wav)
             np.save(out, spec)
             if plot:
-                PLOT_DIR.mkdir(parents=True, exist_ok=True)  # Ensure plot directory exists
-                plot_spectrogram(spec, wav)
+                PLOT_DIR.mkdir(parents=True, exist_ok=True)
+                plot_spectrogram(spec, wav, label_prefix)
     print("[cache_all] Spectrogram caching DONE")
 
-def plot_spectrogram(spec: np.ndarray, wav: Path):
+
+def plot_spectrogram(spec: np.ndarray, wav: Path, label_prefix: str):
     """Plot and save the spectrogram for debugging."""
     plt.figure(figsize=(10, 4))
     plt.imshow(spec.T, aspect="auto", origin="lower")
     plt.colorbar(format="%+2.0f dB")
-    plt.title(f"Log-mel spectrogram of {wav.name}")
+    plt.title(f"Log-mel spectrogram of {wav.name} ({label_prefix})")
     plt.xlabel("Time (frames)")
     plt.ylabel("Mel bands")
     plt.tight_layout()
-    plt.savefig(PLOT_DIR / f"{wav.stem}.png")
+    plt.savefig(PLOT_DIR / f"{label_prefix}_{wav.stem}.png")
     plt.clf()
     plt.close()
 
@@ -127,7 +140,7 @@ def plot_spectrogram(spec: np.ndarray, wav: Path):
 class ParkinsonDataset(Dataset):
     def __init__(self, files: List[Path]):
         self.files = files
-        # Infer label by filename prefix (HC_ vs PD_)
+        # Label by filename prefix (HC_ vs PD_) injected during caching
         self.labels = [0 if f.name.startswith("HC_") else 1 for f in files]
 
     def __len__(self):
@@ -142,7 +155,7 @@ class ParkinsonDataset(Dataset):
 
 
 class LSTMAudioClassifier(nn.Module):
-    def __init__(self, n_mels=N_MELS, hidden_size=128, num_layers=2, dropout=0.3):
+    def __init__(self, n_mels: int = N_MELS, hidden_size: int = 128, num_layers: int = 2, dropout: float = 0.3):
         super().__init__()
         self.lstm = nn.LSTM(
             input_size=n_mels,
@@ -187,11 +200,22 @@ def step_epoch(model, loader, criterion, optimizer=None, device="cpu"):
 # ---------- CLI ----------
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--epochs", type=int, default=10)
+    parser = argparse.ArgumentParser(
+        prog="milestone1_skeleton.py",
+        usage="%(prog)s [options]",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        description="Early Parkinson's Detection Using Speech Analysis - Milestone 1",
+        epilog="Example: python milestone1_skeleton.py --epochs 20 --comments 'First run' --plot"
+    )
+    parser.add_argument("-e", "--epochs", type=int, default=10, help="Number of epochs to train the model")
+    parser.add_argument("-c", "--comments", type=str, default=None, help="Comments to be printed in the log")
+    parser.add_argument("--plot", action="store_true", default=False, help="Compute and save the spectrograms")
     args = parser.parse_args()
 
-    cache_all(plot=True)
+    print(f"EXECUTION TIME: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(args.comments)
+
+    cache_all(args.plot)
 
     all_files = sorted(CACHE_DIR.glob("*.npy"))
     labels = [0 if f.name.startswith("HC_") else 1 for f in all_files]
@@ -223,10 +247,11 @@ def main():
     for epoch in range(1, args.epochs + 1):
         tr_loss, tr_acc = step_epoch(model, train_dl, criterion, optimizer, device)
         val_loss, val_acc = step_epoch(model, val_dl, criterion, None, device)
-        print(f"Epoch {epoch:02d} | train acc {tr_acc:.3f} | val acc {val_acc:.3f}")
+        print(f"Epoch {epoch:02d} | train acc {tr_acc:.3f} | val acc {val_acc:.3f} | train loss {tr_loss:.3f} | val loss {val_loss:.3f}")
 
-    # TODO: save checkpoints, metrics, confusion matrix, ROC
+    # TODO: save checkpoints, metrics, confusion matrix, ROC-AUC
 
 
 if __name__ == "__main__":
     main()
+    print("[INFO] Finished\n\n")
