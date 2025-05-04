@@ -42,7 +42,11 @@ import os
 from datetime import datetime
 from pathlib import Path
 from typing import List, Tuple
+<<<<<<< HEAD
 !pip install librosa
+=======
+
+>>>>>>> c1bf03cb4d98cf0dfcc66743ec604a099561dcf8
 import librosa
 import numpy as np
 import matplotlib.pyplot as plt
@@ -55,7 +59,11 @@ from torch.utils.data import Dataset, DataLoader
 DATA_ROOT = Path("data-source/audio")
 CACHE_DIR = Path("artifacts/mel_specs")
 PLOT_DIR = Path("artifacts/plots")
+<<<<<<< HEAD
 SAMPLE_RATE = 16_000
+=======
+SAMPLE_RATE = 16_000      # 16kHz
+>>>>>>> c1bf03cb4d98cf0dfcc66743ec604a099561dcf8
 N_MELS = 64
 HOP_LENGTH = 160          # 10 ms
 WIN_LENGTH = 400          # 25 ms
@@ -221,7 +229,11 @@ def main():
     labels = [0 if f.name.startswith("HC_") else 1 for f in all_files]
     train_files, val_files = train_test_split(
         all_files,
+<<<<<<< HEAD
         test_size=0.2,
+=======
+        test_size=0.3,
+>>>>>>> c1bf03cb4d98cf0dfcc66743ec604a099561dcf8
         stratify=labels,
         random_state=RANDOM_SEED,
     )
