@@ -17,6 +17,3 @@ deep learning project - ulisboa
    ### Proposals for Implementation:
    
      1) Use both deep neural networks (DNNs) and pre-trained models (such as Wav2Vec, etc.) directly for the classification of Parkinson’s disease from raw audio data. 
-
-
-
