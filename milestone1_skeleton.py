@@ -55,7 +55,7 @@ from torch.utils.data import Dataset, DataLoader
 DATA_ROOT = Path("data-source/audio")
 CACHE_DIR = Path("artifacts/mel_specs")
 PLOT_DIR = Path("artifacts/plots")
-SAMPLE_RATE = 16_000
+SAMPLE_RATE = 16_000      # 16kHz
 N_MELS = 64
 HOP_LENGTH = 160          # 10 ms
 WIN_LENGTH = 400          # 25 ms
@@ -221,7 +221,7 @@ def main():
     labels = [0 if f.name.startswith("HC_") else 1 for f in all_files]
     train_files, val_files = train_test_split(
         all_files,
-        test_size=0.2,
+        test_size=0.3,
         stratify=labels,
         random_state=RANDOM_SEED,
     )
