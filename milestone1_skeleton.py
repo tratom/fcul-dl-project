@@ -250,6 +250,58 @@ def main():
 
     # TODO: save checkpoints, metrics, confusion matrix, ROC-AUC
 
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, roc_auc_score, roc_curve, auc
+import joblib
+
+# === Checkpoint saving ===
+def save_checkpoint(model, optimizer, epoch, loss, path='checkpoint.pth'):
+    checkpoint = {
+        'model_state_dict': model.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+        'epoch': epoch,
+        'loss': loss
+    }
+    torch.save(checkpoint, path)
+    print(f"Checkpoint saved at {path}")
+
+# === Metrics & Confusion Matrix ===
+def evaluate_model(model, dataloader, device):
+    model.eval()
+    all_preds = []
+    all_labels = []
+    with torch.no_grad():
+        for X, y in dataloader:
+            X, y = X.to(device), y.to(device)
+            outputs = model(X)
+            probs = torch.sigmoid(outputs).squeeze()
+            preds = (probs > 0.5).int()
+            all_preds.extend(probs.cpu().numpy())
+            all_labels.extend(y.cpu().numpy())
+
+    # Save metrics
+    auc_score = roc_auc_score(all_labels, all_preds)
+    print(f"ROC-AUC: {auc_score:.4f}")
+
+    # Save confusion matrix
+    cm = confusion_matrix(all_labels, (np.array(all_preds) > 0.5).astype(int))
+    disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+    disp.plot()
+    plt.savefig("confusion_matrix.png")
+    print("Saved confusion matrix as confusion_matrix.png")
+
+    # Save ROC curve
+    fpr, tpr, _ = roc_curve(all_labels, all_preds)
+    plt.figure()
+    plt.plot(fpr, tpr, label=f'AUC = {auc_score:.2f}')
+    plt.plot([0, 1], [0, 1], linestyle='--')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('ROC Curve')
+    plt.legend()
+    plt.savefig("roc_curve.png")
+    print("Saved ROC curve as roc_curve.png")
+
+    return auc_score
 
 if __name__ == "__main__":
     main()
