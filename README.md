@@ -1,8 +1,39 @@
-# fcul-dl-project
-deep learning project - ulisboa
+# Early Parkinson's Detection Using Speech Analysis
+## Course project for the Deep Learning course at Facultade de Ciencias, Universidade de Lisboa.
+### Group 8:
+- Antonio Alampi (64316)
+- Tommaso Tragno (64699)
+- Cristian Tedesco (65149)
+- Pol Rion Solé (65177)
 
+The goal is to build a model that can detect early signs of Parkinson's disease using speech analysis.
+The dataset consists of audio recordings of patients with Parkinson's disease and healthy controls.
+The dataset is available at [FigShare](https://figshare.com/articles/dataset/Voice_Samples_for_Patients_with_Parkinson_s_Disease_and_Healthy_Controls/23849127)
 
-# Paper:
+The dataset is divided into two folders: HC_AH (Healthy Control) and PD_AH (Parkinson's Disease).
+The audio files are in WAV format and have a sample rate of 8kHz.
+
+## Folder layout
+----------------------
+```
+project-root/
+ ├─ data-source/
+ │   └─ audio/
+ │      ├─ HC_AH/   (Healthy Control - 41 wav)
+ │      └─ PD_AH/   (Parkinson's Disease - 40 wav)
+ ├─ artifacts/
+ │   ├─ durations/
+ │   │   ├─ audio_metadata.csv
+ │   │   └─ duration_distribution.png
+ │   ├─ mel_specs/
+ │   │   └─ HC_AH_*.npy or PD_AH_*.npy   (fixed-length (MAX_FRAMES, N_MELS))
+ │   ├─ plots/
+ │   │   └─ HC_AH_*.png or PD_AH_*.png   (spectrogram plots for debugging)
+ │   └─ vsp_all_features_with_demographics.csv
+ └─ milestone1_skeleton.py
+```
+
+# Reference Paper:
 
 ## 1. Predictive models in the diagnosis of Parkinson’s disease through voice analysis by Tomás Freitas Gonçalves (UPorto)
    ### Research Questions:
