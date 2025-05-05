@@ -2,22 +2,25 @@
 """
 Milestone 1 - Early Parkinson's Detection Using Speech Analysis
 Data pipeline & experimental skeleton code
-Group: Antonio Alampi (64316), Tommaso Tragno (64699), Cristian Tedesco (65149), Pol Rion Solé (65177)
-
+------------------------------------------------
 This script pre-computes log-mel spectrograms from the raw wav files and
 provides a minimal PyTorch training skeleton with an LSTM classifier.
 It will be possible to edit the hyper-parameters in the CONFIG section to explore variations,
 or swap out the model in **LSTMAudioClassifier** with more advanced architectures in later milestones.
 
-Usage
------
-$ python milestone1_skeleton.py                 # first run - caches spectrograms
-Arguments
------
-    --epochs <int>   Number of epochs to train the model (default: 10)
-    --comments <str> Comments to be printed in the log (default: None)
-    --plot           Compute and save the spectrograms (default: False)
-    --help           Show this help message and exit
+usage: milestone1_skeleton.py [options]
+
+Early Parkinson's Detection Using Speech Analysis - Milestone 1
+
+options:
+  -h, --help            show this help message and exit
+  -e EPOCHS, --epochs EPOCHS
+                        Number of epochs to train the model (default: 10)
+  -c COMMENTS, --comments COMMENTS
+                        Comments to be printed in the log (default: None)
+  --plot                Compute and save the spectrograms (default: False)
+
+Example: python milestone1_skeleton.py --epochs 20 --comments 'First run' --plot
 
 Folder layout expected
 ----------------------
