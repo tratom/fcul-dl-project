@@ -29,6 +29,7 @@ project-root/
  │   │   └─ HC_AH_*.npy or PD_AH_*.npy   (fixed-length (MAX_FRAMES, N_MELS))
  │   ├─ plots/
  │   │   └─ HC_AH_*.png or PD_AH_*.png   (spectrogram plots for debugging)
+ |   ├─ stats/      (Statistics and plots about training)
  │   └─ vsp_all_features_with_demographics.csv
  └─ milestone1_skeleton.py
 ```

@@ -1,27 +1,38 @@
 #!/usr/bin/env python
 """
-Milestone 1 – Early Parkinson’s Detection Using Speech Analysis
-Data pipeline & experimental skeleton code + **metrics & checkpoints**
+Milestone 1 - Early Parkinson's Detection Using Speech Analysis
+Data pipeline & experimental skeleton code + **metrics & checkpoints**
 ------------------------------------------------
-This script pre‑computes log‑mel spectrograms from the raw wav files and
+This script pre-computes log-mel spectrograms from the raw wav files and
 runs a minimal LSTM classifier. It now also:
-  • Saves the **best checkpoint** (highest val ROC‑AUC).
-  • Computes **accuracy, precision, recall, F1, ROC‑AUC** at the end of training.
-  • Exports **confusion‑matrix** and **ROC curve** plots under `artifacts/plots/`.
+  • Saves the **best checkpoint** (highest val ROC-AUC).
+  • Computes **accuracy, precision, recall, F1, ROC-AUC** at the end of training.
+  • Exports **confusion-matrix** and **ROC curve** plots under `artifacts/plots/`.
 
-Usage examples
---------------
-$ python milestone1_skeleton.py                 # quick 10‑epoch smoke test
-$ python milestone1_skeleton.py -e 50 --plot    # longer run with plotting
+usage: milestone1_skeleton.py [options]
+
+Early Parkinson's Detection Using Speech Analysis - Milestone 1
+
+options:
+  -h, --help            show this help message and exit
+  -e EPOCHS, --epochs EPOCHS
+                        Number of epochs to train the model (default: 10)
+  -c COMMENTS, --comments COMMENTS
+                        Comments to be printed in the log (default: None)
+  --plot                Compute and save the spectrograms (default: False)
+
+Example: python milestone1_skeleton.py # quick 10-epoch smoke test 
+Example: python milestone1_skeleton.py -e 50 --plot # longer run with plotting
 
 Folder layout expected
 ----------------------
-project‑root/
- ├─ data-source/audio/HC_AH/   41 wav (healthy)
- │                      /PD_AH/   40 wav (Parkinson’s)
- ├─ artifacts/mel_specs/   (auto‑generated)
- ├─ artifacts/plots/       (auto‑generated)
- ├─ artifacts/checkpoints/ (auto‑generated)
+project-root/
+ ├─ data-source/audio/HC_AH/   41 wav (healthy)
+ │                   /PD_AH/   40 wav (Parkinson's)
+ ├─ artifacts/mel_specs/   (auto-generated)
+ ├─ artifacts/plots/       (auto-generated)
+ ├─ artifacts/checkpoints/ (auto-generated)
+ ├─ artifacts/stats/       (auto-generated)
  └─ milestone1_skeleton.py (this file)
 """
 from __future__ import annotations
@@ -51,14 +62,15 @@ DATA_ROOT = Path("data-source/audio")
 CACHE_DIR = Path("artifacts/mel_specs")
 PLOT_DIR = Path("artifacts/plots")
 CHECKPOINT_DIR = Path("artifacts/checkpoints")
+STATS_DIR = Path("artifacts/stats")
 
-SAMPLE_RATE = 16_000
+SAMPLE_RATE = 16_000        # 16 kHz
 N_MELS = 64
-HOP_LENGTH = 160          # 10 ms
-WIN_LENGTH = 400          # 25 ms
+HOP_LENGTH = 160            # 10 ms
+WIN_LENGTH = 400            # 25 ms
 FMIN = 50
-FMAX = 4_000              # adapt to 8 kHz originals
-MAX_FRAMES = 1_024        # ≈10 s @ 100 fps
+FMAX = 4_000                # adapt to 8 kHz originals (Nyquist = SampleRate / 2)
+MAX_FRAMES = 1_024          # ≈10 s @ 100 fps
 
 RANDOM_SEED = 42
 BATCH_SIZE = 8
@@ -69,7 +81,7 @@ NUM_WORKERS = os.cpu_count() or 2
 # ---------- Data utilities ----------
 
 def list_wav_files() -> List[Tuple[Path, int]]:
-    """Return list of (file_path, label) where label 0 = HC, 1 = PD."""
+    """Return list of (file_path, label) where label 0 = HC, 1 = PD."""
     wavs: list[tuple[Path, int]] = []
     for label_name, label in [("HC_AH", 0), ("PD_AH", 1)]:
         for wav in (DATA_ROOT / label_name).glob("*.wav"):
@@ -78,7 +90,7 @@ def list_wav_files() -> List[Tuple[Path, int]]:
 
 
 def load_and_preprocess(path: Path) -> np.ndarray:
-    """Load wav and compute a padded / truncated log‑mel spectrogram (T × M)."""
+    """Load wav and compute a padded / truncated log-mel spectrogram (T × M)."""
     y, sr = librosa.load(path, sr=SAMPLE_RATE)
     y = librosa.util.normalize(y)
     melspec = librosa.feature.melspectrogram(
@@ -91,7 +103,7 @@ def load_and_preprocess(path: Path) -> np.ndarray:
         fmax=FMAX,
         power=2.0,
     )
-    logmel = librosa.power_to_db(melspec, ref=np.max).T.astype(np.float32)  # (T, M)
+    logmel = librosa.power_to_db(melspec, ref=np.max).T.astype(np.float32)  # (T, M)
 
     # Pad / truncate to MAX_FRAMES
     n_frames = logmel.shape[0]
@@ -104,7 +116,7 @@ def load_and_preprocess(path: Path) -> np.ndarray:
 
 
 def cache_all(plot: bool = False):
-    """Pre‑compute spectrograms once; safe to skip on subsequent runs."""
+    """Pre-compute spectrograms once; safe to skip on subsequent runs."""
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     PLOT_DIR.mkdir(parents=True, exist_ok=True)
     for wav, _ in list_wav_files():
@@ -121,8 +133,8 @@ def cache_all(plot: bool = False):
 def plot_spectrogram(spec: np.ndarray, wav: Path, label_prefix: str):
     plt.figure(figsize=(10, 4))
     plt.imshow(spec.T, aspect="auto", origin="lower")
-    plt.colorbar(format="%+2.0f dB")
-    plt.title(f"Log‑mel spectrogram of {wav.name} ({label_prefix})")
+    plt.colorbar(format="%+2.0f dB")
+    plt.title(f"Log-mel spectrogram of {wav.name} ({label_prefix})")
     plt.xlabel("Time (frames)")
     plt.ylabel("Mel bands")
     plt.tight_layout()
@@ -139,7 +151,7 @@ class ParkinsonDataset(Dataset):
         return len(self.files)
 
     def __getitem__(self, idx):
-        spec = np.load(self.files[idx])  # (T, M)
+        spec = np.load(self.files[idx])  # (T, M)
         return (
             torch.from_numpy(spec),  # float32
             torch.tensor(self.labels[idx], dtype=torch.float32),
@@ -162,7 +174,7 @@ class LSTMAudioClassifier(nn.Module):
             nn.Linear(hidden_size, 1),
         )
 
-    def forward(self, x):  # x: (B, T, M)
+    def forward(self, x):  # x: (B, T, M)
         out, _ = self.lstm(x)
         last = out[:, -1, :]
         return self.out(last).squeeze(1)
@@ -206,7 +218,7 @@ def evaluate(model, loader: DataLoader, device="cpu"):
 def plot_confusion_matrix(cm: np.ndarray, path: Path):
     plt.figure(figsize=(4, 4))
     plt.imshow(cm, interpolation="nearest", cmap="Blues")
-    plt.title("Confusion Matrix")
+    plt.title("Confusion Matrix")
     plt.colorbar()
     tick_marks = np.arange(2)
     plt.xticks(tick_marks, ["HC", "PD"])
@@ -233,9 +245,9 @@ def plot_roc_curve(y_true: np.ndarray, probs: np.ndarray, path: Path):
     plt.figure()
     plt.plot(fpr, tpr, linewidth=2)
     plt.plot([0, 1], [0, 1], linestyle="--")
-    plt.xlabel("False Positive Rate")
-    plt.ylabel("True Positive Rate")
-    plt.title(f"ROC curve (AUC = {auc:.3f})")
+    plt.xlabel("False Positive Rate")
+    plt.ylabel("True Positive Rate")
+    plt.title(f"ROC curve (AUC = {auc:.3f})")
     plt.tight_layout()
     plt.savefig(path)
     plt.close()
@@ -270,15 +282,16 @@ def main():
         prog="milestone1_skeleton.py",
         usage="%(prog)s [options]",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-        description="Early Parkinson's Detection Using Speech Analysis – Milestone 1",
-        epilog="Example: python milestone1_skeleton.py -e 50 --plot",
+        description="Early Parkinson's Detection Using Speech Analysis - Milestone 1",
+        epilog="Example: python milestone1_skeleton.py                 # quick 10-epoch smoke test"
+            "Example: python milestone1_skeleton.py -e 50 --plot    # longer run with plotting",
     )
     parser.add_argument("-e", "--epochs", type=int, default=10, help="Number of epochs")
     parser.add_argument("-c", "--comments", type=str, default=None, help="Optional log comment")
     parser.add_argument("--plot", action="store_true", default=False, help="Save individual spectrograms")
     args = parser.parse_args()
 
-    print(f"EXECUTION TIME: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"EXECUTION TIME: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     if args.comments:
         print("[COMMENT]", args.comments)
 
@@ -293,8 +306,18 @@ def main():
         random_state=RANDOM_SEED,
     )
 
-    train_dl = DataLoader(ParkinsonDataset(train_files), batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS)
-    val_dl = DataLoader(ParkinsonDataset(val_files), batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS)
+    train_dl = DataLoader(
+        ParkinsonDataset(train_files),
+        batch_size=BATCH_SIZE,
+        shuffle=True,
+        num_workers=NUM_WORKERS
+    )
+    val_dl = DataLoader(
+        ParkinsonDataset(val_files),
+        batch_size=BATCH_SIZE,
+        shuffle=False,
+        num_workers=NUM_WORKERS
+    )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = LSTMAudioClassifier().to(device)
@@ -302,6 +325,7 @@ def main():
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
     CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
+    STATS_DIR.mkdir(parents=True, exist_ok=True)
     best_roc = -1.0
 
     for epoch in range(1, args.epochs + 1):
@@ -333,8 +357,9 @@ def main():
             print(f"{k:10}: {v}")
 
     # Plots
-    plot_confusion_matrix(final_metrics["cm"], PLOT_DIR / "confusion_matrix.png")
-    plot_roc_curve(final_metrics["y_true"], final_metrics["probs"], PLOT_DIR / "roc_curve.png")
+    plot_confusion_matrix(final_metrics["cm"], STATS_DIR / "confusion_matrix.png")
+    plot_roc_curve(final_metrics["y_true"], final_metrics["probs"], STATS_DIR / "roc_curve.png")
+    print("Confusion matrix and ROC curve saved to artifacts/plots/")
 
     print("[INFO] Finished\n")
 
