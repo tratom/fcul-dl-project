@@ -1,0 +1,4 @@
+https://developers.google.com/machine-learning/crash-course/classification/roc-and-auc
+https://research.google/blog/specaugment-a-new-data-augmentation-method-for-automatic-speech-recognition/
+https://hub.docker.com/r/tensorflow/tensorflow
+https://www.tensorflow.org/tensorboard

@@ -19,17 +19,17 @@ The audio files are in WAV format and have a sample rate of 8kHz.
 project-root/
  ├─ data-source/
  │   └─ audio/
- │      ├─ HC_AH/   (Healthy Control - 41 wav)
- │      └─ PD_AH/   (Parkinson's Disease - 40 wav)
+ │      ├─ HC_AH/                         (Healthy Control - 41 wav)
+ │      └─ PD_AH/                         (Parkinson's Disease - 40 wav)
  ├─ artifacts/
  │   ├─ durations/
  │   │   ├─ audio_metadata.csv
  │   │   └─ duration_distribution.png
  │   ├─ mel_specs/
- │   │   └─ HC_AH_*.npy or PD_AH_*.npy   (fixed-length (MAX_FRAMES, N_MELS))
+ │   │   └─ HC_AH_*.npy or PD_AH_*.npy    (fixed-length (MAX_FRAMES, N_MELS))
  │   ├─ plots/
- │   │   └─ HC_AH_*.png or PD_AH_*.png   (spectrogram plots for debugging)
- |   ├─ stats/      (Statistics and plots about training)
+ │   │   └─ HC_AH_*.png or PD_AH_*.png    (spectrogram plots for debugging)
+ |   ├─ stats/                            (Statistics and plots about training)
  │   └─ vsp_all_features_with_demographics.csv
  └─ milestone1_skeleton.py
 ```

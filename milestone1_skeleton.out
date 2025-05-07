@@ -213,3 +213,76 @@ roc_auc   : 0.3942307692307692
 Confusion matrix and ROC curve saved to artifacts/plots/
 [INFO] Finished
 
+EXECUTION TIME: 2025-05-07 18:04:55
+[COMMENT] TEST with only 4 entry
+[cache_all] Spectrogram caching DONE
+Epoch 01 | train acc 0.953 | val acc 0.953 | train loss 0.236 | val loss 0.199
+[CHECKPOINT] Saved new best model → best_auc_1.000.pt
+Epoch 02 | train acc 0.953 | val acc 0.953 | train loss 0.215 | val loss 0.205
+Epoch 03 | train acc 0.953 | val acc 0.953 | train loss 0.207 | val loss 0.187
+Epoch 04 | train acc 0.953 | val acc 0.953 | train loss 0.184 | val loss 0.178
+Epoch 05 | train acc 0.953 | val acc 0.953 | train loss 0.177 | val loss 0.171
+Epoch 06 | train acc 0.953 | val acc 0.953 | train loss 0.192 | val loss 0.178
+Epoch 07 | train acc 0.953 | val acc 0.953 | train loss 0.192 | val loss 0.176
+Epoch 08 | train acc 0.953 | val acc 0.953 | train loss 0.172 | val loss 0.176
+Epoch 09 | train acc 0.953 | val acc 0.953 | train loss 0.180 | val loss 0.172
+Epoch 10 | train acc 0.953 | val acc 0.953 | train loss 0.192 | val loss 0.181
+--- FINAL VALIDATION METRICS ---
+acc       : 0.9534883720930233
+precision : 0.0
+recall    : 0.0
+f1        : 0.0
+roc_auc   : 1.0
+Confusion matrix and ROC curve saved to artifacts/plots/
+[INFO] Finished
+
+EXECUTION TIME: 2025-05-07 18:07:06
+[COMMENT] TEST with only 4 entry(the prev one was wrong)
+[cache_all] Spectrogram caching DONE
+Epoch 01 | train acc 0.500 | val acc 0.500 | train loss 1.010 | val loss 0.717
+[CHECKPOINT] Saved new best model → best_auc_0.000.pt
+Epoch 02 | train acc 0.500 | val acc 0.500 | train loss 0.746 | val loss 0.740
+[CHECKPOINT] Saved new best model → best_auc_0.500.pt
+Epoch 03 | train acc 0.500 | val acc 0.500 | train loss 0.723 | val loss 0.707
+Epoch 04 | train acc 0.500 | val acc 0.500 | train loss 0.742 | val loss 0.693
+Epoch 05 | train acc 0.500 | val acc 0.500 | train loss 0.698 | val loss 0.687
+[CHECKPOINT] Saved new best model → best_auc_0.750.pt
+Epoch 06 | train acc 0.750 | val acc 0.750 | train loss 0.678 | val loss 0.649
+[CHECKPOINT] Saved new best model → best_auc_1.000.pt
+Epoch 07 | train acc 0.750 | val acc 0.750 | train loss 0.611 | val loss 0.644
+Epoch 08 | train acc 0.500 | val acc 1.000 | train loss 0.616 | val loss 0.630
+Epoch 09 | train acc 1.000 | val acc 0.500 | train loss 0.613 | val loss 0.625
+Epoch 10 | train acc 1.000 | val acc 0.750 | train loss 0.552 | val loss 0.612
+--- FINAL VALIDATION METRICS ---
+acc       : 0.75
+precision : 0.6666666666666666
+recall    : 1.0
+f1        : 0.8
+roc_auc   : 1.0
+Confusion matrix and ROC curve saved to artifacts/plots/
+[INFO] Finished
+
+EXECUTION TIME: 2025-05-07 18:10:16
+[COMMENT] TEST with only 4 entry(the prev one was wrong)
+[cache_all] Spectrogram caching DONE
+EXECUTION TIME: 2025-05-07 18:10:43
+[COMMENT] TEST with only 4 entry(the prev one was wrong)
+[cache_all] Spectrogram caching DONE
+Epoch 01 | train acc 0.500 | val acc 0.500 | train loss 0.743 | val loss 0.817
+[CHECKPOINT] Saved new best model → best_auc_1.000.pt
+Epoch 02 | train acc 0.500 | val acc 0.750 | train loss 0.748 | val loss 0.615
+Epoch 03 | train acc 1.000 | val acc 0.500 | train loss 0.573 | val loss 0.598
+Epoch 04 | train acc 0.750 | val acc 0.750 | train loss 0.609 | val loss 0.544
+Epoch 05 | train acc 0.500 | val acc 0.750 | train loss 0.664 | val loss 0.535
+Epoch 06 | train acc 0.750 | val acc 1.000 | train loss 0.588 | val loss 0.480
+Epoch 07 | train acc 1.000 | val acc 1.000 | train loss 0.476 | val loss 0.437
+Epoch 08 | train acc 1.000 | val acc 1.000 | train loss 0.417 | val loss 0.392
+--- FINAL VALIDATION METRICS ---
+acc       : 1.0
+precision : 1.0
+recall    : 1.0
+f1        : 1.0
+roc_auc   : 1.0
+Confusion matrix and ROC curve saved to artifacts/plots/
+[INFO] Finished
+

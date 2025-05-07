@@ -299,12 +299,14 @@ def main():
 
     all_files = sorted(CACHE_DIR.glob("*.npy"))
     labels = [0 if f.name.startswith("HC_") else 1 for f in all_files]
-    train_files, val_files = train_test_split(
-        all_files,
-        test_size=0.3,
-        stratify=labels,
-        random_state=RANDOM_SEED,
-    )
+    # train_files, val_files = train_test_split(
+    #     all_files,
+    #     test_size=0.3,
+    #     stratify=labels,
+    #     random_state=RANDOM_SEED,
+    # )
+    train_files, val_files = all_files, all_files
+    # NOTE: for testing, use all files as train and val
 
     train_dl = DataLoader(
         ParkinsonDataset(train_files),
