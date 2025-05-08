@@ -160,7 +160,7 @@ class ParkinsonDataset(Dataset):
 
 # ---------- Model ----------
 class LSTMAudioClassifier(nn.Module):
-    def __init__(self, n_mels: int = N_MELS, hidden_size: int = 128, num_layers: int = 2, dropout: float = 0.3):
+    def __init__(self, n_mels: int = N_MELS, hidden_size: int = 128, num_layers: int = 2, dropout: float = 0.0):
         super().__init__()
         self.lstm = nn.LSTM(
             input_size=n_mels,

@@ -286,3 +286,104 @@ roc_auc   : 1.0
 Confusion matrix and ROC curve saved to artifacts/plots/
 [INFO] Finished
 
+EXECUTION TIME: 2025-05-07 18:19:10
+[COMMENT] TEST with only 4 entry(the prev one was wrong)
+[cache_all] Spectrogram caching DONE
+Epoch 01 | train acc 0.500 | val acc 0.500 | train loss 0.779 | val loss 0.732
+[CHECKPOINT] Saved new best model → best_auc_1.000.pt
+Epoch 02 | train acc 0.500 | val acc 0.500 | train loss 0.741 | val loss 0.654
+Epoch 03 | train acc 0.500 | val acc 1.000 | train loss 0.647 | val loss 0.623
+Epoch 04 | train acc 1.000 | val acc 0.500 | train loss 0.580 | val loss 0.653
+Epoch 05 | train acc 1.000 | val acc 0.750 | train loss 0.615 | val loss 0.606
+Epoch 06 | train acc 0.750 | val acc 0.750 | train loss 0.641 | val loss 0.579
+Epoch 07 | train acc 0.750 | val acc 0.750 | train loss 0.637 | val loss 0.611
+Epoch 08 | train acc 1.000 | val acc 1.000 | train loss 0.614 | val loss 0.574
+Epoch 09 | train acc 0.500 | val acc 1.000 | train loss 0.702 | val loss 0.546
+Epoch 10 | train acc 0.500 | val acc 0.750 | train loss 0.542 | val loss 0.499
+Epoch 11 | train acc 1.000 | val acc 0.750 | train loss 0.445 | val loss 0.495
+Epoch 12 | train acc 0.750 | val acc 0.750 | train loss 0.513 | val loss 0.464
+Epoch 13 | train acc 1.000 | val acc 0.750 | train loss 0.432 | val loss 0.447
+Epoch 14 | train acc 0.750 | val acc 0.750 | train loss 0.443 | val loss 0.503
+Epoch 15 | train acc 0.750 | val acc 0.750 | train loss 0.517 | val loss 0.522
+Epoch 16 | train acc 0.750 | val acc 1.000 | train loss 0.462 | val loss 0.417
+Epoch 17 | train acc 1.000 | val acc 1.000 | train loss 0.382 | val loss 0.387
+Epoch 18 | train acc 0.250 | val acc 1.000 | train loss 0.807 | val loss 0.333
+Epoch 19 | train acc 0.750 | val acc 1.000 | train loss 0.466 | val loss 0.324
+Epoch 20 | train acc 1.000 | val acc 1.000 | train loss 0.411 | val loss 0.257
+--- FINAL VALIDATION METRICS ---
+acc       : 1.0
+precision : 1.0
+recall    : 1.0
+f1        : 1.0
+roc_auc   : 1.0
+Confusion matrix and ROC curve saved to artifacts/plots/
+[INFO] Finished
+
+EXECUTION TIME: 2025-05-07 18:20:20
+[COMMENT] TEST with only 4 entry(the prev one was wrong)
+[cache_all] Spectrogram caching DONE
+Epoch 01 | train acc 0.500 | val acc 0.500 | train loss 0.680 | val loss 0.849
+[CHECKPOINT] Saved new best model → best_auc_1.000.pt
+Epoch 02 | train acc 0.500 | val acc 0.500 | train loss 0.849 | val loss 0.627
+Epoch 03 | train acc 0.500 | val acc 0.750 | train loss 0.627 | val loss 0.563
+Epoch 04 | train acc 0.750 | val acc 0.750 | train loss 0.563 | val loss 0.554
+Epoch 05 | train acc 0.750 | val acc 1.000 | train loss 0.554 | val loss 0.505
+Epoch 06 | train acc 1.000 | val acc 0.750 | train loss 0.505 | val loss 0.573
+Epoch 07 | train acc 0.750 | val acc 1.000 | train loss 0.573 | val loss 0.423
+Epoch 08 | train acc 1.000 | val acc 1.000 | train loss 0.423 | val loss 0.352
+Epoch 09 | train acc 1.000 | val acc 1.000 | train loss 0.352 | val loss 0.301
+Epoch 10 | train acc 1.000 | val acc 1.000 | train loss 0.301 | val loss 0.291
+Epoch 11 | train acc 1.000 | val acc 1.000 | train loss 0.291 | val loss 0.302
+Epoch 12 | train acc 1.000 | val acc 1.000 | train loss 0.302 | val loss 0.212
+Epoch 13 | train acc 1.000 | val acc 1.000 | train loss 0.212 | val loss 0.153
+Epoch 14 | train acc 1.000 | val acc 1.000 | train loss 0.153 | val loss 0.117
+Epoch 15 | train acc 1.000 | val acc 1.000 | train loss 0.117 | val loss 0.082
+Epoch 16 | train acc 1.000 | val acc 1.000 | train loss 0.082 | val loss 0.042
+Epoch 17 | train acc 1.000 | val acc 1.000 | train loss 0.042 | val loss 0.030
+Epoch 18 | train acc 1.000 | val acc 1.000 | train loss 0.030 | val loss 0.019
+Epoch 19 | train acc 1.000 | val acc 1.000 | train loss 0.019 | val loss 0.022
+Epoch 20 | train acc 1.000 | val acc 1.000 | train loss 0.022 | val loss 0.013
+--- FINAL VALIDATION METRICS ---
+acc       : 1.0
+precision : 1.0
+recall    : 1.0
+f1        : 1.0
+roc_auc   : 1.0
+Confusion matrix and ROC curve saved to artifacts/plots/
+[INFO] Finished
+
+EXECUTION TIME: 2025-05-07 18:22:17
+[COMMENT] TEST with 0 dropout
+[cache_all] Spectrogram caching DONE
+Epoch 01 | train acc 0.469 | val acc 0.654 | train loss 0.773 | val loss 0.684
+[CHECKPOINT] Saved new best model → best_auc_0.677.pt
+Epoch 02 | train acc 0.432 | val acc 0.543 | train loss 0.734 | val loss 0.683
+[CHECKPOINT] Saved new best model → best_auc_0.685.pt
+Epoch 03 | train acc 0.469 | val acc 0.580 | train loss 0.701 | val loss 0.683
+[CHECKPOINT] Saved new best model → best_auc_0.726.pt
+Epoch 04 | train acc 0.506 | val acc 0.506 | train loss 0.685 | val loss 0.691
+Epoch 05 | train acc 0.506 | val acc 0.506 | train loss 0.722 | val loss 0.693
+Epoch 06 | train acc 0.420 | val acc 0.494 | train loss 0.794 | val loss 0.701
+Epoch 07 | train acc 0.506 | val acc 0.506 | train loss 0.750 | val loss 0.739
+Epoch 08 | train acc 0.506 | val acc 0.494 | train loss 0.718 | val loss 0.692
+Epoch 09 | train acc 0.444 | val acc 0.556 | train loss 0.698 | val loss 0.691
+Epoch 10 | train acc 0.494 | val acc 0.494 | train loss 0.694 | val loss 0.701
+Epoch 11 | train acc 0.494 | val acc 0.494 | train loss 0.701 | val loss 0.691
+Epoch 12 | train acc 0.494 | val acc 0.506 | train loss 0.692 | val loss 0.697
+Epoch 13 | train acc 0.506 | val acc 0.506 | train loss 0.702 | val loss 0.692
+Epoch 14 | train acc 0.519 | val acc 0.568 | train loss 0.695 | val loss 0.688
+Epoch 15 | train acc 0.444 | val acc 0.494 | train loss 0.695 | val loss 0.692
+Epoch 16 | train acc 0.395 | val acc 0.494 | train loss 0.703 | val loss 0.687
+Epoch 17 | train acc 0.494 | val acc 0.494 | train loss 0.697 | val loss 0.690
+Epoch 18 | train acc 0.494 | val acc 0.494 | train loss 0.697 | val loss 0.696
+Epoch 19 | train acc 0.494 | val acc 0.506 | train loss 0.695 | val loss 0.696
+Epoch 20 | train acc 0.506 | val acc 0.506 | train loss 0.703 | val loss 0.694
+--- FINAL VALIDATION METRICS ---
+acc       : 0.5061728395061729
+precision : 0.0
+recall    : 0.0
+f1        : 0.0
+roc_auc   : 0.5198170731707317
+Confusion matrix and ROC curve saved to artifacts/plots/
+[INFO] Finished
+
