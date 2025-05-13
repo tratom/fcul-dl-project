@@ -159,25 +159,42 @@ class ParkinsonDataset(Dataset):
 
 
 # ---------- Model ----------
+
 class LSTMAudioClassifier(nn.Module):
-    def __init__(self, n_mels: int = N_MELS, hidden_size: int = 128, num_layers: int = 2, dropout: float = 0.3):
+    def __init__(
+        self,
+        n_mels: int = N_MELS,
+        hidden_size: int = 256,
+        num_layers: int = 3,
+        dropout: float = 0.5,
+        bidirectional: bool = True,
+    ):
         super().__init__()
+        self.bidirectional = bidirectional
         self.lstm = nn.LSTM(
             input_size=n_mels,
             hidden_size=hidden_size,
             num_layers=num_layers,
             batch_first=True,
             dropout=dropout,
+            bidirectional=bidirectional,
         )
-        self.out = nn.Sequential(
-            nn.LayerNorm(hidden_size),
-            nn.Linear(hidden_size, 1),
+        d = hidden_size * (2 if bidirectional else 1)
+        self.classifier = nn.Sequential(
+            nn.LayerNorm(d),
+            nn.Dropout(dropout),
+            nn.Linear(d, d // 4),
+            nn.ReLU(inplace=True),
+            nn.Dropout(dropout),
+            nn.Linear(d // 4, 1),
         )
 
-    def forward(self, x):  # x: (B, T, M)
-        out, _ = self.lstm(x)
-        last = out[:, -1, :]
-        return self.out(last).squeeze(1)
+    def forward(self, x):            # x: (B, T, M)
+        out, _ = self.lstm(x)        # out: (B, T, d)
+        # try mean‐pooling instead of last‐step
+        h = out.mean(dim=1)          # (B, d)
+        logits = self.classifier(h)  # (B, 1)
+        return logits.squeeze(1)
 
 
 # ---------- Metrics & plots ----------
