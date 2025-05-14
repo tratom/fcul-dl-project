@@ -164,9 +164,9 @@ class LSTMAudioClassifier(nn.Module):
     def __init__(
         self,
         n_mels: int = N_MELS,
-        hidden_size: int = 256,
-        num_layers: int = 3,
-        dropout: float = 0.5,
+        hidden_size: int = 128,
+        num_layers: int = 1,
+        dropout: float = 0.3,
         bidirectional: bool = True,
     ):
         super().__init__()
