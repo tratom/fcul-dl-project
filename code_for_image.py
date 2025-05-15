@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 """
 Milestone 1 - Early Parkinson's Detection Using Speech Analysis
-Data pipeline & experimental skeleton code + on-the-fly mel-spectrogram augmentation
-with balanced sampler, weighted loss, epoch training/validation loss & acc, and final metrics
+LSTM-based spectrogram analysis per Rahmatallah et al. (2025), integrated into our milestone1_skeleton pipeline.
+- Uses mel-scale spectrograms matching paper: 256 mel bands, 1.5s central segment, 90% overlap, window=512, n_fft=1024.
+- Feeds sequence of mel frames into LSTM classifier.
 ------------------------------------------------
 usage: milestone1_skeleton.py [options]
 """
@@ -39,14 +40,16 @@ PLOT_DIR = Path("artifacts/plots")
 CHECKPOINT_DIR = Path("artifacts/checkpoints")
 STATS_DIR = Path("artifacts/stats")
 
-SAMPLE_RATE = 16_000       # 16 kHz
-N_MELS = 64
-HOP_LENGTH = 160           # 10 ms
-WIN_LENGTH = 400           # 25 ms
+SAMPLE_RATE = 16000
+SEGMENT_DURATION = 1.5  # seconds per paper
+N_FFT = 1024
+WIN_LENGTH = 512         # 32 ms
+HOP_LENGTH = int(WIN_LENGTH * 0.1)  # 90% overlap
+N_MELS = 256
 FMIN = 50
-FMAX = 4_000               # adapt to original
-N_FFT = 512                # FFT window size
-MAX_FRAMES = 1_024         # ≈10 s @ 100 fps
+FMAX = 4000
+
+SEGMENT_FRAMES = int(np.ceil(SEGMENT_DURATION * SAMPLE_RATE / HOP_LENGTH))
 
 RANDOM_SEED = 42
 BATCH_SIZE = 8
@@ -54,6 +57,14 @@ NUM_WORKERS = os.cpu_count() or 2
 # ------------------------------------------------
 
 # -------- Data utilities --------
+
+def cache_all(plot: bool = False):
+    """Precompute and verify spectrogram files (audio or image mode)."""
+    # In image mode, assume images are already generated.
+    # You can extend this to copy or check files if needed.
+    print("[cache_all] (image mode) Skipped pre-caching")
+
+
 def list_wav_files() -> List[Tuple[Path, int]]:
     wavs = []
     for label_name, label in [("HC_AH", 0), ("PD_AH", 1)]:
@@ -63,76 +74,72 @@ def list_wav_files() -> List[Tuple[Path, int]]:
 
 
 def load_and_preprocess(path: Path) -> np.ndarray:
+    # Load and normalize
     y, sr = librosa.load(path, sr=SAMPLE_RATE)
     y = librosa.util.normalize(y)
+    # Compute mel-spectrogram
     melspec = librosa.feature.melspectrogram(
         y=y,
         sr=sr,
         n_fft=N_FFT,
-        n_mels=N_MELS,
         hop_length=HOP_LENGTH,
         win_length=WIN_LENGTH,
+        n_mels=N_MELS,
         fmin=FMIN,
         fmax=FMAX,
         power=2.0,
     )
-    logmel = librosa.power_to_db(melspec, ref=np.max).T.astype(np.float32)
-    T, _ = logmel.shape
-    if T < MAX_FRAMES:
-        logmel = np.pad(logmel, ((0, MAX_FRAMES - T), (0, 0)), mode='constant', constant_values=-80.0)
+    logmel = librosa.power_to_db(melspec, ref=np.max)
+    logmel = logmel.T.astype(np.float32)  # shape (T, M)
+    T, M = logmel.shape
+    # Center 1.5s segment in frames
+    if T >= SEGMENT_FRAMES:
+        start = (T - SEGMENT_FRAMES) // 2
+        seg = logmel[start:start + SEGMENT_FRAMES]
     else:
-        logmel = logmel[:MAX_FRAMES]
-    return logmel
-
-
-def cache_all(plot: bool = False):
-    CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    PLOT_DIR.mkdir(parents=True, exist_ok=True)
-    for wav, _ in list_wav_files():
-        out = CACHE_DIR / f"{wav.parent.name.split('_')[0]}_{wav.stem}.npy"
-        if not out.exists():
-            spec = load_and_preprocess(wav)
-            np.save(out, spec)
-            if plot:
-                plt.figure(figsize=(10,4))
-                plt.imshow(spec.T, aspect='auto', origin='lower')
-                plt.colorbar(format='%+2.0f dB')
-                plt.title(f"Log-mel spectrogram of {wav.stem}")
-                plt.savefig(PLOT_DIR / f"{wav.stem}.png")
-                plt.close()
-    print("[cache_all] Done caching mel-spectrograms")
+        # pad if shorter
+        pad_top = (SEGMENT_FRAMES - T) // 2
+        pad_bot = SEGMENT_FRAMES - T - pad_top
+        seg = np.pad(logmel, ((pad_top, pad_bot), (0, 0)), mode='constant', constant_values=-80.0)
+    return seg  # (SEGMENT_FRAMES, N_MELS)
 
 # -------- Dataset & Augmentation --------
 class ParkinsonDataset(Dataset):
-    def __init__(self, wavs: List[Path], labels: List[int], augment: bool = False):
-        self.wavs = wavs
+    def __init__(self,
+                 files: List[Path],
+                 labels: List[int],
+                 augment: bool = False,
+                 use_image: bool = False):
+        self.files = files
         self.labels = labels
         self.augment = augment
+        self.use_image = use_image
 
     def __len__(self):
-        return len(self.wavs)
+        return len(self.files)
 
     def __getitem__(self, idx):
-        mel = load_and_preprocess(self.wavs[idx])
-        if self.augment:
-            # Time warping
+        path = self.files[idx]
+        if self.use_image:
+            mel = load_image_spectrogram(path)
+        else:
+            mel = load_and_preprocess(path)
+        if self.augment and not self.use_image:
+            # audio-based augmentations on spectrogram
             T, _ = mel.shape
+            # time warping
             rate = 1.0 + np.random.uniform(-0.2, 0.2)
             warped = librosa.effects.time_stretch(mel.T, rate=rate).T
             if warped.shape[0] < T:
                 warped = np.pad(warped, ((0, T - warped.shape[0]), (0, 0)), mode='constant', constant_values=warped.mean())
             mel = warped[:T]
-            # SpecAugment: time & freq masking
+            # spec augment
             for _ in range(2):
                 t = np.random.randint(0, int(T * 0.1)); t0 = np.random.randint(0, T - t)
                 mel[t0:t0+t, :] = mel.mean()
             for _ in range(2):
-                f = np.random.randint(0, int(N_MELS * 0.1)); f0 = np.random.randint(0, N_MELS - f)
+                f = np.random.randint(0, int(mel.shape[1] * 0.1)); f0 = np.random.randint(0, mel.shape[1] - f)
                 mel[:, f0:f0+f] = mel.mean()
-            # Noise
-            dyn = mel.max() - mel.min(); mel += np.random.randn(*mel.shape) * (0.02 * dyn)
-            # Time shift
-            shift = np.random.randint(-int(T * 0.1), int(T * 0.1)); mel = np.roll(mel, shift, axis=0)
         mel = mel.astype(np.float32)
         return torch.from_numpy(mel), torch.tensor(self.labels[idx], dtype=torch.float32)
 
@@ -140,9 +147,16 @@ class ParkinsonDataset(Dataset):
 class LSTMAudioClassifier(nn.Module):
     def __init__(self):
         super().__init__()
-        self.lstm = nn.LSTM(N_MELS, 128, num_layers=1, batch_first=True, bidirectional=True)
+        self.lstm = nn.LSTM(
+            input_size=N_MELS,
+            hidden_size=128,
+            num_layers=1,
+            batch_first=True,
+            dropout=0.3,
+            bidirectional=True,
+        )
         d = 128 * 2
-        self.fc = nn.Sequential(
+        self.classifier = nn.Sequential(
             nn.LayerNorm(d),
             nn.Dropout(0.3),
             nn.Linear(d, d // 4),
@@ -151,12 +165,12 @@ class LSTMAudioClassifier(nn.Module):
             nn.Linear(d // 4, 1),
         )
 
-    def forward(self, x):
+    def forward(self, x):  # x: (B, T, M)
         out, _ = self.lstm(x)
         h = out.mean(dim=1)
-        return self.fc(h).squeeze(1)
+        return self.classifier(h).squeeze(1)
 
-# -------- Helpers --------
+# -------- Training Helpers --------
 def train_one_epoch(model, dl, criterion, optimizer, device):
     model.train()
     total_loss, correct, total = 0.0, 0, 0
@@ -190,13 +204,9 @@ def evaluate(model, dl, criterion, device):
             ps.extend(probs)
             correct += (preds == y.cpu().numpy()).sum()
             total += y.size(0)
-    avg_loss = total_loss / total
-    accuracy = correct / total
-    y_true = np.array(ys)
-    y_prob = np.array(ps)
-    return avg_loss, accuracy, y_true, y_prob
+    return total_loss/total, correct/total, np.array(ys), np.array(ps)
 
-# -------- Main --------
+# -------- Main Entry --------
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-e', '--epochs', type=int, default=10)
@@ -237,20 +247,15 @@ def main():
     criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
-    # Training loop with logging
     for ep in range(1, args.epochs + 1):
         tr_loss, tr_acc = train_one_epoch(model, train_dl, criterion, optimizer, device)
         val_loss, val_acc, _, _ = evaluate(model, val_dl, criterion, device)
-        print(
-            f"Epoch {ep:02d} | train_loss {tr_loss:.3f} | train_acc {tr_acc:.3f} "
-            f"| val_loss {val_loss:.3f} | val_acc {val_acc:.3f}"
-        )
+        print(f"Epoch {ep:02d} | train_loss {tr_loss:.3f} | train_acc {tr_acc:.3f} "
+              f"| val_loss {val_loss:.3f} | val_acc {val_acc:.3f}")
 
-    # Final metrics
     _, _, y_true, y_prob = evaluate(model, val_dl, criterion, device)
     fpr, tpr, thr = roc_curve(y_true, y_prob)
-    idx = np.argmax(tpr - fpr)
-    best_thr = thr[idx]
+    best_thr = thr[np.argmax(tpr - fpr)]
     y_pred = (y_prob > best_thr).astype(int)
 
     acc = accuracy_score(y_true, y_pred)
@@ -269,3 +274,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

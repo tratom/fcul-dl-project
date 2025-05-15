@@ -213,3 +213,26 @@ roc_auc   : 0.3942307692307692
 Confusion matrix and ROC curve saved to artifacts/plots/
 [INFO] Finished
 
+EXECUTION TIME: 2025-05-14 11:07:56
+[COMMENT] bidirectional with 100 epoch
+[cache_all] Spectrogram caching DONE
+Epoch 01 | train acc 0.500 | val acc 0.520 | train loss 0.725 | val loss 0.690
+[CHECKPOINT] Saved new best model → best_auc_0.654.pt
+Epoch 02 | train acc 0.429 | val acc 0.640 | train loss 0.747 | val loss 0.686
+[CHECKPOINT] Saved new best model → best_auc_0.718.pt
+Epoch 03 | train acc 0.536 | val acc 0.520 | train loss 0.693 | val loss 0.689
+[CHECKPOINT] Saved new best model → best_auc_0.750.pt
+Epoch 04 | train acc 0.500 | val acc 0.480 | train loss 0.705 | val loss 0.695
+Epoch 05 | train acc 0.518 | val acc 0.480 | train loss 0.685 | val loss 0.694
+Epoch 06 | train acc 0.411 | val acc 0.520 | train loss 0.728 | val loss 0.685
+Epoch 07 | train acc 0.357 | val acc 0.520 | train loss 0.732 | val loss 0.682
+Epoch 08 | train acc 0.589 | val acc 0.640 | train loss 0.683 | val loss 0.683
+Epoch 09 | train acc 0.536 | val acc 0.600 | train loss 0.694 | val loss 0.682
+Epoch 10 | train acc 0.536 | val acc 0.520 | train loss 0.697 | val loss 0.687
+Epoch 11 | train acc 0.446 | val acc 0.480 | train loss 0.733 | val loss 0.687
+Epoch 12 | train acc 0.554 | val acc 0.560 | train loss 0.686 | val loss 0.679
+Epoch 13 | train acc 0.679 | val acc 0.640 | train loss 0.667 | val loss 0.681
+Epoch 14 | train acc 0.554 | val acc 0.560 | train loss 0.692 | val loss 0.681
+Epoch 15 | train acc 0.589 | val acc 0.600 | train loss 0.675 | val loss 0.680
+Epoch 16 | train acc 0.607 | val acc 0.560 | train loss 0.677 | val loss 0.684
+Epoch 17 | train acc 0.607 | val acc 0.600 | train loss 0.657 | val loss 0.682
