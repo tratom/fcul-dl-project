@@ -64,6 +64,7 @@ PLOT_DIR = Path("artifacts/plots")
 CHECKPOINT_DIR = Path("artifacts/checkpoints")
 STATS_DIR = Path("artifacts/stats")
 
+# ––––– resampling –––––
 SAMPLE_RATE = 16_000        # 16 kHz
 N_MELS = 64
 HOP_LENGTH = 160            # 10 ms
@@ -71,6 +72,13 @@ WIN_LENGTH = 400            # 25 ms
 FMIN = 50
 FMAX = 4_000                # adapt to 8 kHz originals (Nyquist = SampleRate / 2)
 MAX_FRAMES = 1_024          # ≈10 s @ 100 fps
+
+# ––––– windowing –––––
+WINDOW_SEC        = 2.0          # fixed segment length  (seconds)
+WINDOW_OVERLAP    = 0.50         # 50 % → 1 s hop
+WINDOW_FRAMES     = int(WINDOW_SEC * SAMPLE_RATE / HOP_LENGTH)   # 200 frames
+HOP_FRAMES        = int(WINDOW_FRAMES * (1 - WINDOW_OVERLAP))    # 100 frames
+
 
 RANDOM_SEED = 42
 BATCH_SIZE = 8
@@ -114,23 +122,44 @@ def load_and_preprocess(path: Path) -> np.ndarray:
         logmel = np.pad(logmel, ((0, pad), (0, 0)), mode="constant", constant_values=-80.0)
     return logmel
 
+def slice_into_windows(spec: np.ndarray) -> list[np.ndarray]:
+    """Return a list of 2-s log-mel windows with 50 % overlap.
+    Pads the tail with - 80 dB if it is < 2 s."""
+    T = spec.shape[0]
+    windows = []
+    for start in range(0, max(T - WINDOW_FRAMES, 0) + 1, HOP_FRAMES):
+        end = start + WINDOW_FRAMES
+        win = spec[start:end]
+        if win.shape[0] < WINDOW_FRAMES:            # leftover tail
+            pad = WINDOW_FRAMES - win.shape[0]
+            win = np.pad(win, ((0, pad), (0, 0)),
+                         mode="constant", constant_values=-80.0)
+        windows.append(win)
+    if not windows:                                 # whole clip shorter than 2 s
+        win = np.pad(spec, ((0, WINDOW_FRAMES - T), (0, 0)),
+                     mode="constant", constant_values=-80.0)
+        windows.append(win)
+    return windows
+
 
 def cache_all(plot: bool = False):
-    """Pre-compute spectrograms once; safe to skip on subsequent runs."""
+    """Pre-compute *window* spectrograms and save each one as its own .npy file."""
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    PLOT_DIR.mkdir(parents=True, exist_ok=True)
     for wav, _ in list_wav_files():
-        label_prefix = wav.parent.name.split("_")[0]  # "HC" or "PD"
-        out = CACHE_DIR / f"{label_prefix}_{wav.stem}.npy"
-        if not out.exists():
-            spec = load_and_preprocess(wav)
-            np.save(out, spec)
-            if plot:
-                plot_spectrogram(spec, wav, label_prefix)
-    print("[cache_all] Spectrogram caching DONE")
+        label_prefix = wav.parent.name.split("_")[0]          # HC / PD
+        spec = load_and_preprocess(wav)                       # full clip (T×M)
+        for idx, win in enumerate(slice_into_windows(spec)):
+            out = CACHE_DIR / f"{label_prefix}_{wav.stem}_{idx:02d}.npy"
+            if not out.exists():
+                np.save(out, win)
+                if plot:
+                    plot_spectrogram(win, wav, f"{label_prefix}_{idx:02d}")
+    print("[cache_all] Window caching DONE")
+
 
 
 def plot_spectrogram(spec: np.ndarray, wav: Path, label_prefix: str):
+    PLOT_DIR.mkdir(parents=True, exist_ok=True)
     plt.figure(figsize=(10, 4))
     plt.imshow(spec.T, aspect="auto", origin="lower")
     plt.colorbar(format="%+2.0f dB")
@@ -143,7 +172,7 @@ def plot_spectrogram(spec: np.ndarray, wav: Path, label_prefix: str):
 
 
 class ParkinsonDataset(Dataset):
-    def __init__(self, files: List[Path]):
+    def __init__(self, files: list[Path]):
         self.files = files
         self.labels = [0 if f.name.startswith("HC_") else 1 for f in files]
 
@@ -151,7 +180,7 @@ class ParkinsonDataset(Dataset):
         return len(self.files)
 
     def __getitem__(self, idx):
-        spec = np.load(self.files[idx])  # (T, M)
+        spec = np.load(self.files[idx])  # (200, 64)
         return (
             torch.from_numpy(spec),  # float32
             torch.tensor(self.labels[idx], dtype=torch.float32),
@@ -297,16 +326,27 @@ def main():
 
     cache_all(args.plot)
 
-    all_files = sorted(CACHE_DIR.glob("*.npy"))
-    labels = [0 if f.name.startswith("HC_") else 1 for f in all_files]
-    # train_files, val_files = train_test_split(
-    #     all_files,
-    #     test_size=0.3,
-    #     stratify=labels,
-    #     random_state=RANDOM_SEED,
-    # )
-    train_files, val_files = all_files, all_files
+    # split by *file*, not by window
+    all_wavs  = [p for p, _ in list_wav_files()]
+    labels    = [0 if p.parent.name.startswith("HC") else 1 for p in all_wavs]
+
+    train_wavs, val_wavs = train_test_split(
+        all_wavs,
+        test_size=0.30,
+        stratify=labels,
+        random_state=RANDOM_SEED
+    )
+
+    # collect the windows that belong to each split
+    def windows_for(wavs: list[Path]) -> list[Path]:
+        stems = {w.stem for w in wavs}
+        return [f for f in CACHE_DIR.glob("*.npy") if f.stem.split("_")[1] in stems]
+
+    train_files = windows_for(train_wavs)
+    val_files   = windows_for(val_wavs)
+
     # NOTE: for testing, use all files as train and val
+    # train_files, val_files = all_files, all_files
 
     train_dl = DataLoader(
         ParkinsonDataset(train_files),

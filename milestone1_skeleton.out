@@ -387,3 +387,125 @@ roc_auc   : 0.5198170731707317
 Confusion matrix and ROC curve saved to artifacts/plots/
 [INFO] Finished
 
+EXECUTION TIME: 2025-05-08 16:45:42
+[COMMENT] just another run for comparison
+[cache_all] Spectrogram caching DONE
+Epoch 01 | train acc 0.519 | val acc 0.494 | train loss 0.736 | val loss 0.693
+[CHECKPOINT] Saved new best model → best_auc_0.580.pt
+Epoch 02 | train acc 0.457 | val acc 0.506 | train loss 0.720 | val loss 0.708
+Epoch 03 | train acc 0.506 | val acc 0.494 | train loss 0.696 | val loss 0.696
+[CHECKPOINT] Saved new best model → best_auc_0.603.pt
+Epoch 04 | train acc 0.519 | val acc 0.531 | train loss 0.695 | val loss 0.688
+[CHECKPOINT] Saved new best model → best_auc_0.635.pt
+Epoch 05 | train acc 0.519 | val acc 0.630 | train loss 0.705 | val loss 0.673
+[CHECKPOINT] Saved new best model → best_auc_0.699.pt
+Epoch 06 | train acc 0.506 | val acc 0.519 | train loss 0.690 | val loss 0.675
+[CHECKPOINT] Saved new best model → best_auc_0.713.pt
+Epoch 07 | train acc 0.531 | val acc 0.506 | train loss 0.682 | val loss 0.692
+Epoch 08 | train acc 0.568 | val acc 0.519 | train loss 0.684 | val loss 0.683
+Epoch 09 | train acc 0.469 | val acc 0.556 | train loss 0.716 | val loss 0.683
+Epoch 10 | train acc 0.494 | val acc 0.506 | train loss 0.696 | val loss 0.687
+--- FINAL VALIDATION METRICS ---
+acc       : 0.5061728395061729
+precision : 0.0
+recall    : 0.0
+f1        : 0.0
+roc_auc   : 0.6920731707317074
+Confusion matrix and ROC curve saved to artifacts/plots/
+[INFO] Finished
+
+EXECUTION TIME: 2025-05-08 16:51:20
+[COMMENT] test without padding
+[cache_all] Spectrogram caching DONE
+EXECUTION TIME: 2025-05-08 17:14:09
+[COMMENT] test with padding again - spectrograms with energy instead of power
+[cache_all] Spectrogram caching DONE
+Epoch 01 | train acc 0.506 | val acc 0.506 | train loss 0.826 | val loss 0.781
+[CHECKPOINT] Saved new best model → best_auc_0.509.pt
+--- FINAL VALIDATION METRICS ---
+acc       : 0.5061728395061729
+precision : 0.0
+recall    : 0.0
+f1        : 0.0
+roc_auc   : 0.5085365853658537
+Confusion matrix and ROC curve saved to artifacts/plots/
+[INFO] Finished
+
+EXECUTION TIME: 2025-05-08 17:15:14
+[COMMENT] test with padding again - spectrograms with energy instead of power
+[cache_all] Spectrogram caching DONE
+Epoch 01 | train acc 0.494 | val acc 0.506 | train loss 0.767 | val loss 0.689
+[CHECKPOINT] Saved new best model → best_auc_0.613.pt
+Epoch 02 | train acc 0.481 | val acc 0.494 | train loss 0.723 | val loss 0.721
+[CHECKPOINT] Saved new best model → best_auc_0.691.pt
+Epoch 03 | train acc 0.321 | val acc 0.494 | train loss 0.760 | val loss 0.688
+[CHECKPOINT] Saved new best model → best_auc_0.703.pt
+Epoch 04 | train acc 0.444 | val acc 0.543 | train loss 0.695 | val loss 0.686
+Epoch 05 | train acc 0.506 | val acc 0.543 | train loss 0.690 | val loss 0.683
+Epoch 06 | train acc 0.506 | val acc 0.519 | train loss 0.701 | val loss 0.683
+[CHECKPOINT] Saved new best model → best_auc_0.706.pt
+Epoch 07 | train acc 0.605 | val acc 0.531 | train loss 0.679 | val loss 0.673
+[CHECKPOINT] Saved new best model → best_auc_0.735.pt
+Epoch 08 | train acc 0.506 | val acc 0.617 | train loss 0.695 | val loss 0.676
+Epoch 09 | train acc 0.543 | val acc 0.605 | train loss 0.682 | val loss 0.665
+[CHECKPOINT] Saved new best model → best_auc_0.749.pt
+Epoch 10 | train acc 0.617 | val acc 0.519 | train loss 0.664 | val loss 0.691
+--- FINAL VALIDATION METRICS ---
+acc       : 0.5185185185185185
+precision : 1.0
+recall    : 0.025
+f1        : 0.04878048780487805
+roc_auc   : 0.6554878048780488
+Confusion matrix and ROC curve saved to artifacts/plots/
+[INFO] Finished
+
+EXECUTION TIME: 2025-05-08 17:18:54
+[COMMENT] test with padding again - spectrograms with energy instead of power
+[cache_all] Spectrogram caching DONE
+EXECUTION TIME: 2025-05-08 17:19:03
+[COMMENT] test with padding again - spectrograms with energy instead of power
+[cache_all] Spectrogram caching DONE
+Epoch 01 | train acc 0.519 | val acc 0.506 | train loss 0.783 | val loss 0.713
+[CHECKPOINT] Saved new best model → best_auc_0.602.pt
+Epoch 02 | train acc 0.605 | val acc 0.494 | train loss 0.681 | val loss 0.754
+[CHECKPOINT] Saved new best model → best_auc_0.612.pt
+Epoch 03 | train acc 0.407 | val acc 0.494 | train loss 0.755 | val loss 0.706
+[CHECKPOINT] Saved new best model → best_auc_0.641.pt
+Epoch 04 | train acc 0.358 | val acc 0.506 | train loss 0.740 | val loss 0.693
+Epoch 05 | train acc 0.506 | val acc 0.494 | train loss 0.720 | val loss 0.695
+Epoch 06 | train acc 0.494 | val acc 0.494 | train loss 0.708 | val loss 0.697
+Epoch 07 | train acc 0.494 | val acc 0.506 | train loss 0.709 | val loss 0.693
+Epoch 08 | train acc 0.506 | val acc 0.506 | train loss 0.739 | val loss 0.704
+Epoch 09 | train acc 0.469 | val acc 0.494 | train loss 0.721 | val loss 0.709
+Epoch 10 | train acc 0.469 | val acc 0.506 | train loss 0.716 | val loss 0.707
+Epoch 11 | train acc 0.506 | val acc 0.506 | train loss 0.705 | val loss 0.693
+Epoch 12 | train acc 0.568 | val acc 0.494 | train loss 0.699 | val loss 0.702
+Epoch 13 | train acc 0.481 | val acc 0.506 | train loss 0.693 | val loss 0.695
+Epoch 14 | train acc 0.506 | val acc 0.494 | train loss 0.694 | val loss 0.693
+Epoch 15 | train acc 0.494 | val acc 0.494 | train loss 0.710 | val loss 0.698
+Epoch 16 | train acc 0.494 | val acc 0.519 | train loss 0.702 | val loss 0.692
+Epoch 17 | train acc 0.519 | val acc 0.506 | train loss 0.694 | val loss 0.696
+Epoch 18 | train acc 0.506 | val acc 0.506 | train loss 0.699 | val loss 0.696
+Epoch 19 | train acc 0.519 | val acc 0.494 | train loss 0.702 | val loss 0.705
+Epoch 20 | train acc 0.494 | val acc 0.494 | train loss 0.704 | val loss 0.693
+--- FINAL VALIDATION METRICS ---
+acc       : 0.49382716049382713
+precision : 0.49382716049382713
+recall    : 1.0
+f1        : 0.6611570247933884
+roc_auc   : 0.4795731707317073
+Confusion matrix and ROC curve saved to artifacts/plots/
+[INFO] Finished
+
+EXECUTION TIME: 2025-05-13 17:29:16
+[COMMENT] Test with 2 seconds windowing
+EXECUTION TIME: 2025-05-13 17:50:02
+[COMMENT] Test with 2 seconds windowing
+EXECUTION TIME: 2025-05-13 17:51:40
+[COMMENT] Test with 2 seconds windowing
+EXECUTION TIME: 2025-05-14 15:28:44
+[COMMENT] Test with 2 seconds windowing
+[cache_all] Window caching DONE
+EXECUTION TIME: 2025-05-14 15:54:43
+[COMMENT] Test with 2 seconds windowing
+[cache_all] Window caching DONE
