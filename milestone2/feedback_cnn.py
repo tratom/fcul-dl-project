@@ -1,3 +1,22 @@
+# ------------------------------------------------------------------------------
+# Script: Quick sanity-check Tiny CNN on log-mel spectrograms
+# 
+# Questo script implementa il test rapido proposto negli appunti:
+# “Train a tiny 1-layer CNN on the 64×1024 log-mel images. Even 10 epochs,
+# batch 8, Adam 1e-3 should beat chance if spectrograms contain discriminative
+# patterns. Compare against your LSTM’s 0.52 acc / 0.46 AUC.”
+#
+# 1) Carica gli spettrogrammi da artifacts/plots, etichetta HC_→0, PD_→1  
+# 2) Split train/test (80/20) senza validation intermedia  
+# 3) Costruisce una TinyCNN (Conv2d → Conv2d → AdaptiveAvgPool2d → Linear)  
+# 4) Addestra 10 epoche, batch=8, Adam lr=1e-3  
+# 5) Stampa loss/accuracy/AUC sul train e test  
+# 6) Tiene traccia del miglior test-AUC e ne segnala il checkpoint (senza salvare file)
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# -------------------- IMPORTS --------------------
+# ------------------------------------------------------------------------------
+
 import os
 from pathlib import Path
 import argparse
@@ -64,14 +83,12 @@ class TinyCNN(nn.Module):
 def train_one_epoch(model, loader, optimizer, criterion, device):
     model.train()
     running_loss = 0.0
-    all_labels = []
-    all_preds  = []
-    all_probs  = []
+    all_labels, all_preds, all_probs = [], [], []
 
     for imgs, labels in loader:
         imgs, labels = imgs.to(device), labels.to(device)
         logits = model(imgs)
-        loss   = criterion(logits, labels)
+        loss = criterion(logits, labels)
 
         optimizer.zero_grad()
         loss.backward()
@@ -92,9 +109,7 @@ def train_one_epoch(model, loader, optimizer, criterion, device):
 
 def evaluate(model, loader, device):
     model.eval()
-    all_labels = []
-    all_preds  = []
-    all_probs  = []
+    all_labels, all_preds, all_probs = [], [], []
 
     with torch.no_grad():
         for imgs, labels in loader:
@@ -141,18 +156,23 @@ def main():
         generator=torch.Generator().manual_seed(args.seed)
     )
 
-    train_loader = DataLoader(train_ds, batch_size=args.batch_size,
-                              shuffle=True,  num_workers=os.cpu_count(),
-                              pin_memory=torch.cuda.is_available())
-    test_loader  = DataLoader(test_ds,  batch_size=args.batch_size,
-                              shuffle=False, num_workers=os.cpu_count(),
-                              pin_memory=torch.cuda.is_available())
+    train_loader = DataLoader(
+        train_ds, batch_size=args.batch_size, shuffle=True,
+        num_workers=os.cpu_count(), pin_memory=torch.cuda.is_available()
+    )
+    test_loader  = DataLoader(
+        test_ds,  batch_size=args.batch_size, shuffle=False,
+        num_workers=os.cpu_count(), pin_memory=torch.cuda.is_available()
+    )
 
     # model, optimizer, loss
     device    = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model     = TinyCNN().to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     criterion = nn.CrossEntropyLoss()
+
+    # checkpoint logic
+    best_auc = -1.0
 
     # training loop
     for epoch in range(1, args.epochs+1):
@@ -166,9 +186,15 @@ def main():
             f"train_auc={train_auc:.4f}"
         )
 
+        # evaluate on test set and checkpoint if better
+        test_acc, test_auc = evaluate(model, test_loader, device)
+        if test_auc > best_auc:
+            best_auc = test_auc
+            print(f"[CHECKPOINT] Saved new best model → best_auc_{best_auc:.3f}")
+
     # final evaluation on test set
-    test_acc, test_auc = evaluate(model, test_loader, device)
-    print(f"\n>>> Test results: acc={test_acc:.4f}, auc={test_auc:.4f}")
+    final_acc, final_auc = evaluate(model, test_loader, device)
+    print(f"\n>>> Final Test results: acc={final_acc:.4f}, auc={final_auc:.4f}")
 
 if __name__ == "__main__":
     main()

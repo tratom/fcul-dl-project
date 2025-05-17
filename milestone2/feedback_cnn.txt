@@ -1,0 +1,17 @@
+#############################fcul-dl-project/milestone2/feedback_cnn.py
+#########################################################################
+[Epoch 1/10] train_loss=0.6997 train_acc=0.4769 train_auc=0.3966
+[CHECKPOINT] Saved new best model → best_auc_0.592
+[Epoch 2/10] train_loss=0.6964 train_acc=0.4769 train_auc=0.5304
+[Epoch 3/10] train_loss=0.6950 train_acc=0.4615 train_auc=0.4696
+[Epoch 4/10] train_loss=0.6910 train_acc=0.5231 train_auc=0.5939
+[Epoch 5/10] train_loss=0.6911 train_acc=0.5231 train_auc=0.5759
+[Epoch 6/10] train_loss=0.6939 train_acc=0.5231 train_auc=0.4241
+[Epoch 7/10] train_loss=0.6949 train_acc=0.5231 train_auc=0.3757
+[Epoch 8/10] train_loss=0.6934 train_acc=0.5231 train_auc=0.4573
+[Epoch 9/10] train_loss=0.6952 train_acc=0.4154 train_auc=0.3416
+[Epoch 10/10] train_loss=0.6945 train_acc=0.4769 train_auc=0.4146
+
+>>> Final Test results: acc=0.6250, auc=0.4500
+############## Compare against your LSTM’s 0.52 acc / 0.46 AUC.
+###############################################################
