@@ -13,6 +13,8 @@
 # con tutte le frequenze visibili nel tempo.
 #Spazio nero a destra: è il padding residuo (–80 dB) fino a 1024 frame, 
 # che serve a mantenere tutte le immagini della stessa dimensione.
+#
+#
 import os
 from pathlib import Path
 
