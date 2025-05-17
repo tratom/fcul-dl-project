@@ -1,0 +1,19 @@
+EXECUTION TIME: 2025-05-17 14:12:51
+Epoch 01 | train acc 0.515 | val acc 0.480 | train loss 0.721 | val loss 0.697
+[CHECKPOINT] Saved best_auc_0.622.pt
+Epoch 02 | train acc 0.473 | val acc 0.480 | train loss 0.728 | val loss 0.699
+Epoch 03 | train acc 0.485 | val acc 0.520 | train loss 0.703 | val loss 0.693
+Epoch 04 | train acc 0.503 | val acc 0.520 | train loss 0.704 | val loss 0.697
+Epoch 05 | train acc 0.482 | val acc 0.520 | train loss 0.707 | val loss 0.709
+Epoch 06 | train acc 0.482 | val acc 0.520 | train loss 0.703 | val loss 0.693
+Epoch 07 | train acc 0.506 | val acc 0.480 | train loss 0.694 | val loss 0.707
+Epoch 08 | train acc 0.503 | val acc 0.480 | train loss 0.698 | val loss 0.700
+Epoch 09 | train acc 0.518 | val acc 0.520 | train loss 0.698 | val loss 0.694
+Epoch 10 | train acc 0.503 | val acc 0.520 | train loss 0.698 | val loss 0.699
+--- FINAL METRICS ---
+acc       : 0.52
+precision : 0.0
+recall    : 0.0
+f1        : 0.0
+roc_auc   : 0.40705128205128205
+Plots saved in artifacts/plots/
