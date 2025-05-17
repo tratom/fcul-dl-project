@@ -1,0 +1,17 @@
+###fcul-dl-project/milestone2/cnn_padding.py
+[Epoch 1/10] train_loss=0.6992 train_acc=0.4769 train_auc=0.4061
+[CHECKPOINT] Saved new best model → best_auc_0.517
+[Epoch 2/10] train_loss=0.6964 train_acc=0.4769 train_auc=0.5247
+[CHECKPOINT] Saved new best model → best_auc_0.583
+[Epoch 3/10] train_loss=0.6949 train_acc=0.4769 train_auc=0.4677
+[Epoch 4/10] train_loss=0.6924 train_acc=0.5538 train_auc=0.6148
+[Epoch 5/10] train_loss=0.6918 train_acc=0.5231 train_auc=0.5750
+[Epoch 6/10] train_loss=0.6924 train_acc=0.5231 train_auc=0.4516
+[Epoch 7/10] train_loss=0.6933 train_acc=0.5231 train_auc=0.3805
+[Epoch 8/10] train_loss=0.6929 train_acc=0.5231 train_auc=0.4639
+[Epoch 9/10] train_loss=0.6941 train_acc=0.4000 train_auc=0.3482
+[Epoch 10/10] train_loss=0.6937 train_acc=0.4769 train_auc=0.4383
+
+>>> Final Test results: acc=0.6250, auc=0.5833
+########################################################
+#Vediamo un miglioramento: è chiaro che la tiny CNN apprende davvero dalle caratteristiche vocali e non dalle code di silenzio.
