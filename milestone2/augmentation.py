@@ -3,9 +3,9 @@
 Early Parkinson's Detection Using Speech Analysis - Waveform Augmentation Script
 Genera:
  1) 5 versioni augmentate per ogni file audio:
-    - speed down / speed up
-    - pitch down / pitch up
-    - pink noise
+    - speed down / speed up (+-0.05)
+    - pitch down / pitch up (+2/-2 semitoni)
+    - pink noise @ 20 dB SNR
  2) Salva ciascuna versione in formato:
     - .wav in artifacts/augmented_audio_wav
     - .npy in artifacts/augmented_audio_npy
