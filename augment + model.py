@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import List, Tuple
 
 import librosa
+
 import numpy as np
 import torch
 import torch.nn as nn
@@ -30,11 +31,14 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 
 # -------------------- CONFIG --------------------
+
 DATA_ROOT      = Path("data-source/audio")
 AUG_DIR        = Path("artifacts/augmented_audio")
 PLOT_DIR       = Path("milestone2/plots_augmented")
 CHECKPOINT_DIR = Path("milestone2/checkpoints_augmented")
 STATS_DIR      = Path("milestone2/stats_augmented")
+for d in (CHECKPOINT_DIR, PLOT_DIR, STATS_DIR):
+    d.mkdir(parents=True, exist_ok=True)
 
 SAMPLE_RATE = 16_000   # 16 kHz
 N_MELS      = 64
@@ -172,19 +176,25 @@ class MelSpecDataset(Dataset):
 
 # -------------------- Model --------------------
 class LSTMAudioClassifier(nn.Module):
-    def __init__(self, n_mels:int=N_MELS,
-                 hidden_size:int=128, num_layers:int=2,
-                 dropout:float=0.3):
+    def __init__(self, n_mels: int = N_MELS,
+                 hidden_size: int = 128, dropout: float = 0.3):
         super().__init__()
         self.lstm = nn.LSTM(
-            input_size=n_mels, hidden_size=hidden_size,
-            num_layers=num_layers, batch_first=True,
-            dropout=dropout
+            input_size=n_mels,
+            hidden_size=hidden_size,
+            num_layers=1,
+            batch_first=True,
+            bidirectional=True,
+            dropout=0.0  # no dropout since num_layers=1
         )
-        self.out = nn.Sequential(nn.LayerNorm(hidden_size), nn.Linear(hidden_size,1))
+        self.out = nn.Sequential(
+            nn.LayerNorm(hidden_size * 2),  # doubled due to bidirection
+            nn.Linear(hidden_size * 2, 1)
+        )
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        out,_ = self.lstm(x)
-        last  = out[:,-1,:]
+        out, _ = self.lstm(x)
+        last = out[:, -1, :]  # shape: (batch, hidden_size * 2)
         return self.out(last).squeeze(1)
 
 # -------------------- Metrics & plots --------------------
