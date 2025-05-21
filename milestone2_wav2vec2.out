@@ -581,3 +581,133 @@ Confusion-matrix and ROC curve saved to artifacts/plots/
 [INFO] Training complete.
 
 
+EXECUTION TIME: 2025-05-20 17:21:25
+[COMMENT] feature extractor frozen
+[INFO] Using device: cpu
+[INFO] Using Wav2Vec2 model: facebook/wav2vec2-base-960h
+--------------ENVIRONMENT-----------------
+🤗 Transformers version : 4.51.3
+package imported from  : /home/tommaso/anaconda3/lib/python3.12/site-packages/transformers
+TrainingArguments file : /home/tommaso/anaconda3/lib/python3.12/site-packages/transformers/training_args.py
+------------------------------------------
+input_values torch.Size([2, 64000]) torch.float32 -1.1664526462554932 1.035493016242981
+attention_mask torch.Size([2, 64000]) torch.int64 1 1
+labels torch.Size([2]) torch.int64 1 1
+forward  →  loss: tensor(0.6839)
+any NaN? False
+{'loss': 0.6931, 'grad_norm': 0.35764798521995544, 'learning_rate': 8.92857142857143e-06, 'epoch': 0.71}
+{'eval_loss': 0.6907261610031128, 'eval_accuracy': 0.6, 'eval_precision': 0.625, 'eval_recall': 0.4166666666666667, 'eval_f1': 0.5, 'eval_roc_auc': 0.6666666666666666, 'eval_runtime': 7.8592, 'eval_samples_per_second': 3.181, 'eval_steps_per_second': 0.891, 'epoch': 1.0}
+{'loss': 0.6952, 'grad_norm': 4.869166851043701, 'learning_rate': 7.738095238095238e-06, 'epoch': 1.43}
+{'eval_loss': 0.6907460689544678, 'eval_accuracy': 0.68, 'eval_precision': 0.7, 'eval_recall': 0.5833333333333334, 'eval_f1': 0.6363636363636364, 'eval_roc_auc': 0.6666666666666666, 'eval_runtime': 8.1486, 'eval_samples_per_second': 3.068, 'eval_steps_per_second': 0.859, 'epoch': 2.0}
+[Callback] Un-froze top 6 layers at epoch 2 → trainable tensors 100; head-LR 6.7e-06, encoder-LR 1.0e-05
+{'loss': 0.693, 'grad_norm': 1.900244951248169, 'learning_rate': 6.547619047619048e-06, 'epoch': 2.14}
+{'loss': 0.6928, 'grad_norm': 0.5160406827926636, 'learning_rate': 5.357142857142857e-06, 'epoch': 2.86}
+{'eval_loss': 0.689849853515625, 'eval_accuracy': 0.6, 'eval_precision': 0.6, 'eval_recall': 0.5, 'eval_f1': 0.5454545454545454, 'eval_roc_auc': 0.608974358974359, 'eval_runtime': 9.2434, 'eval_samples_per_second': 2.705, 'eval_steps_per_second': 0.757, 'epoch': 3.0}
+{'loss': 0.6859, 'grad_norm': 1.1611435413360596, 'learning_rate': 4.166666666666667e-06, 'epoch': 3.57}
+{'eval_loss': 0.6872950792312622, 'eval_accuracy': 0.52, 'eval_precision': 0.5, 'eval_recall': 0.25, 'eval_f1': 0.3333333333333333, 'eval_roc_auc': 0.6217948717948718, 'eval_runtime': 5.8127, 'eval_samples_per_second': 4.301, 'eval_steps_per_second': 1.204, 'epoch': 4.0}
+{'loss': 0.6908, 'grad_norm': 1.3134175539016724, 'learning_rate': 2.9761904761904763e-06, 'epoch': 4.29}
+{'loss': 0.6948, 'grad_norm': 2.972916603088379, 'learning_rate': 1.7857142857142859e-06, 'epoch': 5.0}
+{'eval_loss': 0.6867190003395081, 'eval_accuracy': 0.48, 'eval_precision': 0.4, 'eval_recall': 0.16666666666666666, 'eval_f1': 0.23529411764705882, 'eval_roc_auc': 0.6217948717948718, 'eval_runtime': 6.3401, 'eval_samples_per_second': 3.943, 'eval_steps_per_second': 1.104, 'epoch': 5.0}
+{'loss': 0.6957, 'grad_norm': 2.5623700618743896, 'learning_rate': 5.952380952380953e-07, 'epoch': 5.71}
+{'eval_loss': 0.680614709854126, 'eval_accuracy': 0.6, 'eval_precision': 0.75, 'eval_recall': 0.25, 'eval_f1': 0.375, 'eval_roc_auc': 0.641025641025641, 'eval_runtime': 5.2691, 'eval_samples_per_second': 4.745, 'eval_steps_per_second': 1.328, 'epoch': 6.0}
+{'train_runtime': 331.9353, 'train_samples_per_second': 1.012, 'train_steps_per_second': 0.253, 'train_loss': 0.6913770919754392, 'epoch': 6.0}
+[CHECKPOINT] Best model @ artifacts/checkpoints/checkpoint-14
+--- FINAL VALIDATION METRICS ---
+accuracy  : 0.6
+precision : 0.625
+recall    : 0.4166666666666667
+f1        : 0.5
+roc_auc   : 0.6666666666666666
+Confusion-matrix and ROC curve saved to artifacts/plots/
+[INFO] Training complete.
+
+
+EXECUTION TIME: 2025-05-20 17:34:41
+[COMMENT] feature extractor frozen; fixed lr
+[INFO] Using device: cpu
+[INFO] Using Wav2Vec2 model: facebook/wav2vec2-base-960h
+--------------ENVIRONMENT-----------------
+🤗 Transformers version : 4.51.3
+package imported from  : /home/tommaso/anaconda3/lib/python3.12/site-packages/transformers
+TrainingArguments file : /home/tommaso/anaconda3/lib/python3.12/site-packages/transformers/training_args.py
+------------------------------------------
+input_values torch.Size([2, 64000]) torch.float32 -1.1664526462554932 1.035493016242981
+attention_mask torch.Size([2, 64000]) torch.int64 1 1
+labels torch.Size([2]) torch.int64 1 1
+forward  →  loss: tensor(0.6839)
+any NaN? False
+EXECUTION TIME: 2025-05-20 17:36:59
+[COMMENT] feature extractor frozen; fixed lr
+[INFO] Using device: cpu
+[INFO] Using Wav2Vec2 model: facebook/wav2vec2-base-960h
+--------------ENVIRONMENT-----------------
+🤗 Transformers version : 4.51.3
+package imported from  : /home/tommaso/anaconda3/lib/python3.12/site-packages/transformers
+TrainingArguments file : /home/tommaso/anaconda3/lib/python3.12/site-packages/transformers/training_args.py
+------------------------------------------
+input_values torch.Size([2, 64000]) torch.float32 -1.1664526462554932 1.035493016242981
+attention_mask torch.Size([2, 64000]) torch.int64 1 1
+labels torch.Size([2]) torch.int64 1 1
+forward  →  loss: tensor(0.6839)
+any NaN? False
+{'loss': 0.6931, 'grad_norm': 0.35737425088882446, 'learning_rate': 9.678571428571429e-06, 'epoch': 0.71}
+{'eval_loss': 0.690731942653656, 'eval_accuracy': 0.6, 'eval_precision': 0.625, 'eval_recall': 0.4166666666666667, 'eval_f1': 0.5, 'eval_roc_auc': 0.6666666666666666, 'eval_runtime': 4.7401, 'eval_samples_per_second': 5.274, 'eval_steps_per_second': 1.477, 'epoch': 1.0}
+{'loss': 0.6953, 'grad_norm': 4.8706207275390625, 'learning_rate': 9.321428571428572e-06, 'epoch': 1.43}
+{'eval_loss': 0.6907568573951721, 'eval_accuracy': 0.68, 'eval_precision': 0.7, 'eval_recall': 0.5833333333333334, 'eval_f1': 0.6363636363636364, 'eval_roc_auc': 0.6538461538461539, 'eval_runtime': 4.9426, 'eval_samples_per_second': 5.058, 'eval_steps_per_second': 1.416, 'epoch': 2.0}
+{'loss': 0.693, 'grad_norm': 1.7856460809707642, 'learning_rate': 8.964285714285716e-06, 'epoch': 2.14}
+{'loss': 0.693, 'grad_norm': 0.20988334715366364, 'learning_rate': 8.607142857142859e-06, 'epoch': 2.86}
+{'eval_loss': 0.6908022165298462, 'eval_accuracy': 0.64, 'eval_precision': 0.6363636363636364, 'eval_recall': 0.5833333333333334, 'eval_f1': 0.6086956521739131, 'eval_roc_auc': 0.6538461538461539, 'eval_runtime': 5.1206, 'eval_samples_per_second': 4.882, 'eval_steps_per_second': 1.367, 'epoch': 3.0}
+[Callback] Un-froze top 6 layers at epoch 3 → trainable tensors 100; head-LR 8.5e-06, encoder-LR 1.0e-05
+{'loss': 0.6896, 'grad_norm': 1.1560758352279663, 'learning_rate': 8.25e-06, 'epoch': 3.57}
+{'eval_loss': 0.6879966259002686, 'eval_accuracy': 0.48, 'eval_precision': 0.4, 'eval_recall': 0.16666666666666666, 'eval_f1': 0.23529411764705882, 'eval_roc_auc': 0.6858974358974359, 'eval_runtime': 5.0907, 'eval_samples_per_second': 4.911, 'eval_steps_per_second': 1.375, 'epoch': 4.0}
+{'loss': 0.6939, 'grad_norm': 1.2484272718429565, 'learning_rate': 7.892857142857144e-06, 'epoch': 4.29}
+{'loss': 0.6939, 'grad_norm': 2.7028660774230957, 'learning_rate': 7.5357142857142865e-06, 'epoch': 5.0}
+{'eval_loss': 0.6872807145118713, 'eval_accuracy': 0.48, 'eval_precision': 0.3333333333333333, 'eval_recall': 0.08333333333333333, 'eval_f1': 0.13333333333333333, 'eval_roc_auc': 0.6153846153846154, 'eval_runtime': 5.006, 'eval_samples_per_second': 4.994, 'eval_steps_per_second': 1.398, 'epoch': 5.0}
+{'loss': 0.6971, 'grad_norm': 2.2311177253723145, 'learning_rate': 7.178571428571429e-06, 'epoch': 5.71}
+{'eval_loss': 0.6831409335136414, 'eval_accuracy': 0.56, 'eval_precision': 0.6666666666666666, 'eval_recall': 0.16666666666666666, 'eval_f1': 0.26666666666666666, 'eval_roc_auc': 0.6346153846153846, 'eval_runtime': 4.9535, 'eval_samples_per_second': 5.047, 'eval_steps_per_second': 1.413, 'epoch': 6.0}
+{'loss': 0.6823, 'grad_norm': 1.204174518585205, 'learning_rate': 6.8214285714285724e-06, 'epoch': 6.43}
+{'eval_loss': 0.6811469197273254, 'eval_accuracy': 0.52, 'eval_precision': 0.5, 'eval_recall': 0.16666666666666666, 'eval_f1': 0.25, 'eval_roc_auc': 0.641025641025641, 'eval_runtime': 4.9255, 'eval_samples_per_second': 5.076, 'eval_steps_per_second': 1.421, 'epoch': 7.0}
+{'loss': 0.6804, 'grad_norm': 1.7145378589630127, 'learning_rate': 6.464285714285715e-06, 'epoch': 7.14}
+{'loss': 0.6651, 'grad_norm': 1.148704171180725, 'learning_rate': 6.107142857142858e-06, 'epoch': 7.86}
+{'eval_loss': 0.680926501750946, 'eval_accuracy': 0.56, 'eval_precision': 0.6, 'eval_recall': 0.25, 'eval_f1': 0.35294117647058826, 'eval_roc_auc': 0.6538461538461539, 'eval_runtime': 4.9486, 'eval_samples_per_second': 5.052, 'eval_steps_per_second': 1.415, 'epoch': 8.0}
+{'loss': 0.6781, 'grad_norm': 1.8145930767059326, 'learning_rate': 5.75e-06, 'epoch': 8.57}
+{'eval_loss': 0.6784900426864624, 'eval_accuracy': 0.56, 'eval_precision': 0.6, 'eval_recall': 0.25, 'eval_f1': 0.35294117647058826, 'eval_roc_auc': 0.6474358974358974, 'eval_runtime': 4.9362, 'eval_samples_per_second': 5.065, 'eval_steps_per_second': 1.418, 'epoch': 9.0}
+{'loss': 0.6807, 'grad_norm': 1.393369197845459, 'learning_rate': 5.392857142857143e-06, 'epoch': 9.29}
+{'loss': 0.6835, 'grad_norm': 1.967828392982483, 'learning_rate': 5.035714285714286e-06, 'epoch': 10.0}
+{'eval_loss': 0.6702033281326294, 'eval_accuracy': 0.52, 'eval_precision': 0.5, 'eval_recall': 0.4166666666666667, 'eval_f1': 0.45454545454545453, 'eval_roc_auc': 0.641025641025641, 'eval_runtime': 5.4189, 'eval_samples_per_second': 4.613, 'eval_steps_per_second': 1.292, 'epoch': 10.0}
+{'loss': 0.655, 'grad_norm': 1.9241384267807007, 'learning_rate': 4.678571428571429e-06, 'epoch': 10.71}
+{'eval_loss': 0.6806495785713196, 'eval_accuracy': 0.52, 'eval_precision': 0.5, 'eval_recall': 0.25, 'eval_f1': 0.3333333333333333, 'eval_roc_auc': 0.641025641025641, 'eval_runtime': 4.928, 'eval_samples_per_second': 5.073, 'eval_steps_per_second': 1.42, 'epoch': 11.0}
+{'loss': 0.6816, 'grad_norm': 2.7995331287384033, 'learning_rate': 4.321428571428572e-06, 'epoch': 11.43}
+{'eval_loss': 0.6890504360198975, 'eval_accuracy': 0.52, 'eval_precision': 0.5, 'eval_recall': 0.25, 'eval_f1': 0.3333333333333333, 'eval_roc_auc': 0.6410256410256411, 'eval_runtime': 5.0121, 'eval_samples_per_second': 4.988, 'eval_steps_per_second': 1.397, 'epoch': 12.0}
+{'loss': 0.6824, 'grad_norm': 2.0098655223846436, 'learning_rate': 3.964285714285714e-06, 'epoch': 12.14}
+{'loss': 0.6743, 'grad_norm': 2.408564567565918, 'learning_rate': 3.6071428571428573e-06, 'epoch': 12.86}
+{'eval_loss': 0.6668861508369446, 'eval_accuracy': 0.48, 'eval_precision': 0.4444444444444444, 'eval_recall': 0.3333333333333333, 'eval_f1': 0.38095238095238093, 'eval_roc_auc': 0.6346153846153846, 'eval_runtime': 4.9324, 'eval_samples_per_second': 5.069, 'eval_steps_per_second': 1.419, 'epoch': 13.0}
+{'loss': 0.6644, 'grad_norm': 1.7453491687774658, 'learning_rate': 3.2500000000000002e-06, 'epoch': 13.57}
+{'eval_loss': 0.6625795960426331, 'eval_accuracy': 0.52, 'eval_precision': 0.5, 'eval_recall': 0.5, 'eval_f1': 0.5, 'eval_roc_auc': 0.6282051282051282, 'eval_runtime': 4.9119, 'eval_samples_per_second': 5.09, 'eval_steps_per_second': 1.425, 'epoch': 14.0}
+{'loss': 0.6699, 'grad_norm': 1.5397390127182007, 'learning_rate': 2.892857142857143e-06, 'epoch': 14.29}
+{'loss': 0.6441, 'grad_norm': 2.9054336547851562, 'learning_rate': 2.5357142857142857e-06, 'epoch': 15.0}
+{'eval_loss': 0.6999357342720032, 'eval_accuracy': 0.52, 'eval_precision': 0.5, 'eval_recall': 0.25, 'eval_f1': 0.3333333333333333, 'eval_roc_auc': 0.6282051282051282, 'eval_runtime': 4.9476, 'eval_samples_per_second': 5.053, 'eval_steps_per_second': 1.415, 'epoch': 15.0}
+{'loss': 0.6529, 'grad_norm': 1.2671087980270386, 'learning_rate': 2.1785714285714286e-06, 'epoch': 15.71}
+{'eval_loss': 0.6773499250411987, 'eval_accuracy': 0.52, 'eval_precision': 0.5, 'eval_recall': 0.4166666666666667, 'eval_f1': 0.45454545454545453, 'eval_roc_auc': 0.6282051282051282, 'eval_runtime': 4.9535, 'eval_samples_per_second': 5.047, 'eval_steps_per_second': 1.413, 'epoch': 16.0}
+{'loss': 0.6487, 'grad_norm': 1.5653141736984253, 'learning_rate': 1.8214285714285716e-06, 'epoch': 16.43}
+{'eval_loss': 0.7060753107070923, 'eval_accuracy': 0.48, 'eval_precision': 0.4444444444444444, 'eval_recall': 0.3333333333333333, 'eval_f1': 0.38095238095238093, 'eval_roc_auc': 0.6089743589743589, 'eval_runtime': 4.9742, 'eval_samples_per_second': 5.026, 'eval_steps_per_second': 1.407, 'epoch': 17.0}
+{'loss': 0.6445, 'grad_norm': 1.9519931077957153, 'learning_rate': 1.4642857142857145e-06, 'epoch': 17.14}
+{'loss': 0.636, 'grad_norm': 3.880262851715088, 'learning_rate': 1.1071428571428573e-06, 'epoch': 17.86}
+{'eval_loss': 0.7284142374992371, 'eval_accuracy': 0.44, 'eval_precision': 0.375, 'eval_recall': 0.25, 'eval_f1': 0.3, 'eval_roc_auc': 0.6025641025641025, 'eval_runtime': 4.9087, 'eval_samples_per_second': 5.093, 'eval_steps_per_second': 1.426, 'epoch': 18.0}
+{'loss': 0.6057, 'grad_norm': 2.0115296840667725, 'learning_rate': 7.5e-07, 'epoch': 18.57}
+{'eval_loss': 0.7317927479743958, 'eval_accuracy': 0.44, 'eval_precision': 0.375, 'eval_recall': 0.25, 'eval_f1': 0.3, 'eval_roc_auc': 0.6153846153846154, 'eval_runtime': 5.3494, 'eval_samples_per_second': 4.673, 'eval_steps_per_second': 1.309, 'epoch': 19.0}
+{'loss': 0.6718, 'grad_norm': 2.0135486125946045, 'learning_rate': 3.9285714285714286e-07, 'epoch': 19.29}
+{'loss': 0.6527, 'grad_norm': 3.006239175796509, 'learning_rate': 3.571428571428572e-08, 'epoch': 20.0}
+{'eval_loss': 0.7256209850311279, 'eval_accuracy': 0.48, 'eval_precision': 0.4444444444444444, 'eval_recall': 0.3333333333333333, 'eval_f1': 0.38095238095238093, 'eval_roc_auc': 0.6282051282051282, 'eval_runtime': 5.1474, 'eval_samples_per_second': 4.857, 'eval_steps_per_second': 1.36, 'epoch': 20.0}
+{'train_runtime': 739.1361, 'train_samples_per_second': 1.515, 'train_steps_per_second': 0.379, 'train_loss': 0.6715411492756435, 'epoch': 20.0}
+[CHECKPOINT] Best model @ artifacts/checkpoints/checkpoint-56
+--- FINAL VALIDATION METRICS ---
+accuracy  : 0.48
+precision : 0.4
+recall    : 0.16666666666666666
+f1        : 0.23529411764705882
+roc_auc   : 0.6858974358974359
+Confusion-matrix and ROC curve saved to artifacts/plots/
+[INFO] Training complete.
+
+

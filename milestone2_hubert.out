@@ -1,0 +1,5 @@
+[TIME] 2025-05-20 18:24:19
+[INFO] Experiment: baseline
+[INFO] Device   : cpu
+[INFO] HF model : facebook/hubert-base-ls960
+Transformers ver: 4.51.3

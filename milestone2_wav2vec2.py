@@ -250,12 +250,15 @@ def main():
         description="Fine-tune Wav2Vec 2.0 for PD detection",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    ap.add_argument("-e", "--epochs", type=int, default=10)
+    ap.add_argument("-e", "--epochs", type=int, default=20)
     ap.add_argument("-c", "--comments", type=str, default=None)
     ap.add_argument("--plots", action="store_true", help="Save confusion-matrix & ROC plots")
+    ap.add_argument("-l", "--layers", type=int, default=6, choices=[2,6],
+                    help="Number of transformer layers to unfreeze during fine-tuning")
+    ap.add_argument("-u", "--unfreeze", type=int, default=3, help="Epoch to unfreeze layers")
     args = ap.parse_args()
 
-    print(f"EXECUTION TIME: {datetime.now():%Y-%m-%d %H:%M:%S}")
+    print(f"[TIME] {datetime.now():%Y-%m-%d %H:%M:%S}")
     if args.comments:
         print("[COMMENT]", args.comments)
     print("[INFO] Using device:", "cuda" if torch.cuda.is_available() else "cpu")
@@ -288,6 +291,10 @@ def main():
     )
     # freeze_bottom_layers(model, 1.0)#FREEZE_PCT)
 
+    # Freeze Feature Extractor
+    for p in model.wav2vec2.feature_extractor.parameters():
+        p.requires_grad = False
+
     # Freeze *everything* …
     for p in model.wav2vec2.parameters():
         p.requires_grad = False
@@ -299,11 +306,10 @@ def main():
 
     # override the default AdamW optimizer
     # (which uses all model parameters) to only train the head
-    head_params = [p for p in model.parameters() if p.requires_grad]
-    optim = torch.optim.AdamW(head_params, lr=learning_rate, weight_decay=0.01)
+    # head_params = [p for p in model.parameters() if p.requires_grad]
+    # optim = torch.optim.AdamW(head_params, lr=learning_rate, weight_decay=0.01)
 
     # ─────────────────────────── debug  ─────────────────────────
-    from torch.utils.data import DataLoader
     batch = next(iter(DataLoader(train_ds, batch_size=2, shuffle=True, num_workers=4)))
     for k, v in batch.items():
         print(k, v.shape, v.dtype, v.min().item(), v.max().item())
@@ -340,9 +346,9 @@ def main():
         eval_dataset                = val_ds,
         processing_class            = processor,
         compute_metrics             = compute_metrics,
-        optimizers                  = (optim, None),
-        callbacks                   = [UnfreezeTopLayersCallback(unfreeze_at_epoch=2,
-                                        n_layers=4, #2,
+        # optimizers                  = (optim, None),
+        callbacks                   = [UnfreezeTopLayersCallback(unfreeze_at_epoch=args.unfreeze,
+                                        n_layers=args.layers,
                                         base_lr=training_args.learning_rate)],
     )
 

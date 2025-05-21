@@ -292,7 +292,7 @@ def main():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model  = LSTMAudioClassifier().to(device)
-    criterion, optimizer = nn.BCEWithLogitsLoss(), torch.optim.Adam(model.parameters(), lr=1e-3)
+    criterion, optimizer = nn.BCEWithLogitsLoss(), torch.optim.Adam(model.parameters(), lr=1e-3, weight_decay=1e-5)
 
     CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
     STATS_DIR     .mkdir(parents=True, exist_ok=True)
