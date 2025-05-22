@@ -71,6 +71,7 @@ results = []
 for wav_file in folder.glob("*.wav"):
     features = extract_features(wav_file)
     features["Label"] = "PD"
+    features["filename"] = wav_file.name
     results.append(features)
 
 # === Salva per analisi o ML ===
@@ -83,6 +84,7 @@ results = []
 for wav_file in folder.glob("*.wav"):
     features = extract_features(wav_file)
     features["Label"] = "HC"
+    features["filename"] = wav_file.name
     results.append(features)
 
 # === Salva per analisi o ML ===
