@@ -58,7 +58,7 @@ for d in (CHECKPOINT_DIR, PLOT_DIR, STATS_DIR):
 
 # ---------- AUDIO CONFIG ----------
 SAMPLE_RATE = 16_000            # Wav2Vec2 expects 16 kHz
-MAX_SECONDS = 4.0               # pad / truncate (≈64 k frames)
+MAX_SECONDS = 5.0               # pad / truncate (≈64 k frames)
 MODEL_ID    = "facebook/wav2vec2-base-960h"
 FREEZE_PCT  = 0.8               # freeze bottom 80 % encoder layers
 BATCH_SIZE  = 4
@@ -84,21 +84,22 @@ class PDVoiceDataset(Dataset):
                 wav = wav * random.uniform(0.9, 1.1)
             if random.random() < 0.3:        # white noise
                 wav = wav + 0.005 * torch.randn_like(wav)
-
-        # pad / truncate
-        if len(wav) < self.max_len:
-            wav = torch.nn.functional.pad(wav, (0, self.max_len - len(wav)))
-        else:
-            wav = wav[: self.max_len]
         return wav
 
     def __len__(self): return len(self.files)
 
     def __getitem__(self, idx):
         wav = self._load_audio(self.files[idx])
-        length = len(wav)                            # after pad / truncate
+        length = len(wav)                            # before pad / truncate
+        # pad / truncate
+        if len(wav) < self.max_len:
+            wav = torch.nn.functional.pad(wav, (0, self.max_len - len(wav)))
+        else:
+            wav = wav[: self.max_len]
+        # attention mask
+        # 1 = real audio, 0 = padding
         mask   = torch.zeros(self.max_len, dtype=torch.long)
-        mask[: length] = 1                           # 1 = real audio, 0 = padding
+        mask[: length] = 1
 
         inputs = self.processor(
             wav.numpy(),
@@ -278,7 +279,7 @@ def main():
     )
 
     processor = Wav2Vec2Processor.from_pretrained(MODEL_ID, do_normalize=False)
-    train_ds = PDVoiceDataset(train_f, processor, augment=True)
+    train_ds = PDVoiceDataset(train_f, processor, augment=False)#True)
     val_ds   = PDVoiceDataset(val_f,   processor, augment=False)
 
     learning_rate = 5e-4 if torch.cuda.is_available() else 1e-5
@@ -292,8 +293,8 @@ def main():
     # freeze_bottom_layers(model, 1.0)#FREEZE_PCT)
 
     # Freeze Feature Extractor
-    for p in model.wav2vec2.feature_extractor.parameters():
-        p.requires_grad = False
+    # for p in model.wav2vec2.feature_extractor.parameters():
+    #     p.requires_grad = False
 
     # Freeze *everything* …
     for p in model.wav2vec2.parameters():
@@ -306,8 +307,8 @@ def main():
 
     # override the default AdamW optimizer
     # (which uses all model parameters) to only train the head
-    # head_params = [p for p in model.parameters() if p.requires_grad]
-    # optim = torch.optim.AdamW(head_params, lr=learning_rate, weight_decay=0.01)
+    head_params = [p for p in model.parameters() if p.requires_grad]
+    optim = torch.optim.AdamW(head_params, lr=learning_rate, weight_decay=0.01)
 
     # ─────────────────────────── debug  ─────────────────────────
     batch = next(iter(DataLoader(train_ds, batch_size=2, shuffle=True, num_workers=4)))
@@ -346,7 +347,7 @@ def main():
         eval_dataset                = val_ds,
         processing_class            = processor,
         compute_metrics             = compute_metrics,
-        # optimizers                  = (optim, None),
+        optimizers                  = (optim, None),
         callbacks                   = [UnfreezeTopLayersCallback(unfreeze_at_epoch=args.unfreeze,
                                         n_layers=args.layers,
                                         base_lr=training_args.learning_rate)],
