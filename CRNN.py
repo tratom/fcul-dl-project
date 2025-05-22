@@ -32,7 +32,7 @@ from sklearn.model_selection import StratifiedKFold
 
 # -------------------- CONFIG --------------------
 
-DATA_ROOT      = Path("data-source/audio")
+DATA_ROOT      = Path("train-test-split") # Path("data-source/audio")
 AUG_DIR        = Path("artifacts/augmented_audio")
 PLOT_DIR       = Path("milestone2/plots_augmented")
 CHECKPOINT_DIR = Path("milestone2/checkpoints_augmented")
@@ -47,6 +47,7 @@ WIN_LENGTH  = 400
 FMIN        = 50
 FMAX        = 4_000
 MAX_FRAMES  = 1_024
+SPEC_PAD_VALUE = -80.0
 
 RANDOM_SEED = 42
 BATCH_SIZE  = 8
@@ -54,28 +55,54 @@ NUM_WORKERS = os.cpu_count() or 2
 EPSILON     = 0.1
 
 # -------------------- PREPROCESSING --------------------
-def load_and_preprocess(path: Path) -> np.ndarray:
-    if path.suffix == '.npy':
-        y = np.load(path)
-    else:
-        y, _ = librosa.load(path, sr=SAMPLE_RATE)
-    y, _ = librosa.effects.trim(y, top_db=25)
+def load_and_preprocess(
+    wav_path: Path,
+    spec_path: Path,
+    mask_path: Path,
+    plot_path: Path | None,
+    do_plot: bool
+) -> None:
+    if spec_path.exists() and mask_path.exists() and (not do_plot or (plot_path and plot_path.exists())):
+        return
+    y, _ = librosa.load(str(wav_path), sr=SAMPLE_RATE)
     y = librosa.util.normalize(y)
+    y, _ = librosa.effects.trim(y, top_db=35)
     melspec = librosa.feature.melspectrogram(
-        y=y, sr=SAMPLE_RATE, n_mels=N_MELS,
-        hop_length=HOP_LENGTH, win_length=WIN_LENGTH,
-        fmin=FMIN, fmax=FMAX, power=2.0,
+        y=y, sr=SAMPLE_RATE,
+        n_mels=N_MELS,
+        hop_length=HOP_LENGTH,
+        win_length=WIN_LENGTH,
+        fmin=FMIN, fmax=FMAX,
+        power=2.0
     )
     logmel = librosa.power_to_db(melspec, ref=np.max).astype(np.float32)
-    delta = librosa.feature.delta(logmel)
+    delta  = librosa.feature.delta(logmel)
     delta2 = librosa.feature.delta(logmel, order=2)
-    full = np.stack([logmel, delta, delta2], axis=0)
-    if full.shape[2] >= MAX_FRAMES:
+    full   = np.stack([logmel, delta, delta2], axis=0)
+    T = full.shape[2]
+    if T >= MAX_FRAMES:
         full = full[:, :, :MAX_FRAMES]
+        mask = np.ones(MAX_FRAMES, dtype=np.uint8)
     else:
-        pad_w = MAX_FRAMES - full.shape[2]
-        full = np.pad(full, ((0,0),(0,0),(0,pad_w)), constant_values=-80.0)
-    return full
+        pad = MAX_FRAMES - T
+        full = np.pad(full, ((0,0),(0,0),(0,pad)), constant_values=SPEC_PAD_VALUE)
+        mask = np.concatenate([np.ones(T, dtype=np.uint8), np.zeros(pad, dtype=np.uint8)])
+    spec_path.parent.mkdir(parents=True, exist_ok=True)
+    mask_path.parent.mkdir(parents=True, exist_ok=True)
+    np.save(spec_path, full)
+    np.save(mask_path, mask)
+    if do_plot and plot_path:
+        plot_path.parent.mkdir(parents=True, exist_ok=True)
+        if not plot_path.exists():
+            plt.figure(figsize=(10,4))
+            librosa.display.specshow(
+                logmel, sr=SAMPLE_RATE, hop_length=HOP_LENGTH,
+                x_axis='time', y_axis='mel', fmin=FMIN, fmax=FMAX
+            )
+            plt.colorbar(format='%+2.0f dB')
+            plt.tight_layout()
+            plt.savefig(plot_path)
+            plt.close()
 
 class MelSpecDataset(Dataset):
     def __init__(self, files: List[Path]):
@@ -84,11 +111,11 @@ class MelSpecDataset(Dataset):
     def __len__(self) -> int:
         return len(self.files)
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
-        spec_np = load_and_preprocess(self.files[idx])
-        spec_t  = torch.from_numpy(spec_np)
-        spec_t = spec_t.permute(1, 2, 0).permute(1, 0, 2)
-        label  = torch.tensor(self.labels[idx], dtype=torch.float32)
-        return spec_t, label
+        spec = np.load(str(self.files[idx]))              # (3, N_MELS, MAX_FRAMES)
+        mask = np.load(str(self.files[idx].with_suffix('.mask.npy')))
+        x = torch.from_numpy(spec)                        # float32
+        y = torch.tensor(self.labels[idx], dtype=torch.float32)
+        return x, y
 
 # -------------------- MODEL --------------------
 class CRNNClassifier(nn.Module):
@@ -116,7 +143,7 @@ class CRNNClassifier(nn.Module):
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = x.permute(0, 3, 2, 1)
+        # x = x.permute(0, 3, 2, 1)
         x = self.cnn(x)
         x = x.permute(0, 3, 1, 2)
         B, T, C, F = x.shape
@@ -208,28 +235,39 @@ def step_epoch(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('-e','--epochs',type=int,default=10)
+    parser.add_argument('--plot', action='store_true')
     args = parser.parse_args()
 
     print(f"EXECUTION TIME: {datetime.now():%Y-%m-%d %H:%M:%S}")
 
-    orig_paths = []
-    for lbl in ('HC_AH','PD_AH'):
-        orig_paths.extend(sorted((AUG_DIR/lbl).glob('*.wav')))
-    labels_orig = [0 if p.parent.name=='HC_AH' else 1 for p in orig_paths]
+    # 1) PREPROCESS
+    for split in ('training','validation'):
+        for lbl in ('HC_AH','PD_AH'):
+            wav_dir = DATA_ROOT/split/lbl
+            plot_base = DATA_ROOT/'plots'/split/lbl if args.plot else None
+            for wav in sorted(wav_dir.glob('*.wav')):
+                spec = wav.with_suffix('.npy')
+                mask = wav.with_suffix('.mask.npy')
+                plot = plot_base/f"{wav.stem}.png" if plot_base else None
+                load_and_preprocess(wav, spec, mask, plot, args.plot)
 
-    fold_metrics = []
+    # 2) GATHER ALL SPECS
+    all_files = []
+    for split in ('training','validation'):
+        for lbl in ('HC_AH','PD_AH'):
+            spec_dir = DATA_ROOT/split/lbl
+            all_files += list(spec_dir.glob('*.npy'))
+    all_files = [f for f in all_files if not f.name.endswith('.mask.npy')]
+    labels = [0 if f.parent.name=='HC_AH' else 1 for f in all_files]
+    all_files, labels = np.array(all_files), np.array(labels)
 
     skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_SEED)
-    for fold, (train_idx, val_idx) in enumerate(skf.split(orig_paths, labels_orig)):
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    fold_metrics = []
+    for fold, (train_idx, val_idx) in enumerate(skf.split(all_files, labels)):
         print(f"Fold {fold+1}/5")
-        train_orig = [orig_paths[i] for i in train_idx]
-        val_orig = [orig_paths[i] for i in val_idx]
-
-        train_files = list(train_orig)
-        for orig in train_orig:
-            label = orig.parent.name
-            train_files.extend(sorted((AUG_DIR/label).glob(f"{orig.stem}*.npy")))
-        val_files = list(val_orig)
+        train_files = all_files[train_idx].tolist()
+        val_files   = all_files[val_idx].tolist()
 
         train_dl = DataLoader(
             MelSpecDataset(train_files),
@@ -240,10 +278,9 @@ def main() -> None:
             batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS
         )
 
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         model = CRNNClassifier().to(device)
         criterion = nn.BCEWithLogitsLoss()
-        optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+        optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3, factor=0.5)
 
         best_auc = -1.0
@@ -307,7 +344,7 @@ def main() -> None:
     plt.savefig(STATS_DIR / 'cv_avg_roc_curve.png')
     plt.close()
 
-# ✅ MAIN END
+# MAIN END
 
 if __name__ == '__main__':
     main()
