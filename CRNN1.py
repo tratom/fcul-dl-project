@@ -333,7 +333,7 @@ def main() -> None:
         model = CRNNClassifier().to(device)
         criterion = nn.BCEWithLogitsLoss()
         optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3, factor=0.5, verbose=True)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3, factor=0.5)
 
         best_auc = -1.0
         for epoch in range(1, args.epochs+1):
@@ -384,6 +384,22 @@ def main() -> None:
     plt.ylabel('Score')
     plt.tight_layout()
     plt.savefig(STATS_DIR / 'cv_metrics_barplot.png')
+    plt.close()
+
+    # Plot ROC curve using average y_true/y_prob from all folds
+    all_y_true = np.concatenate([m['y_true'] for m in fold_metrics if 'y_true' in m])
+    all_y_prob = np.concatenate([m['probs'] for m in fold_metrics if 'probs' in m])
+    fpr, tpr, _ = roc_curve(all_y_true, all_y_prob)
+    auc = roc_auc_score(all_y_true, all_y_prob)
+    plt.figure()
+    plt.plot(fpr, tpr, label=f'ROC Curve (AUC={auc:.3f})')
+    plt.plot([0, 1], [0, 1], linestyle='--')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Overall ROC Curve Across All Folds')
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(STATS_DIR / 'cv_avg_roc_curve.png')
     plt.close()
 
 if __name__ == '__main__':
