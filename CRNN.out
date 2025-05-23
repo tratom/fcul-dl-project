@@ -1,0 +1,497 @@
+EXECUTION TIME: 2025-05-23 02:23:01
+Fold 1/5
+Epoch 01 | train acc 0.572 | val acc 0.663 | train loss 0.694 | val loss 0.646
+[CHECKPOINT] Saved fold1_best_auc_0.712.pt
+Epoch 02 | train acc 0.594 | val acc 0.717 | train loss 0.674 | val loss 0.612
+[CHECKPOINT] Saved fold1_best_auc_0.784.pt
+Epoch 03 | train acc 0.643 | val acc 0.745 | train loss 0.653 | val loss 0.588
+[CHECKPOINT] Saved fold1_best_auc_0.805.pt
+Epoch 04 | train acc 0.613 | val acc 0.750 | train loss 0.648 | val loss 0.564
+[CHECKPOINT] Saved fold1_best_auc_0.836.pt
+Epoch 05 | train acc 0.659 | val acc 0.755 | train loss 0.619 | val loss 0.547
+[CHECKPOINT] Saved fold1_best_auc_0.848.pt
+Epoch 06 | train acc 0.663 | val acc 0.766 | train loss 0.617 | val loss 0.521
+[CHECKPOINT] Saved fold1_best_auc_0.871.pt
+Epoch 07 | train acc 0.689 | val acc 0.783 | train loss 0.608 | val loss 0.507
+[CHECKPOINT] Saved fold1_best_auc_0.877.pt
+Epoch 08 | train acc 0.705 | val acc 0.788 | train loss 0.596 | val loss 0.489
+[CHECKPOINT] Saved fold1_best_auc_0.886.pt
+Epoch 09 | train acc 0.712 | val acc 0.804 | train loss 0.588 | val loss 0.477
+[CHECKPOINT] Saved fold1_best_auc_0.891.pt
+Epoch 10 | train acc 0.734 | val acc 0.788 | train loss 0.576 | val loss 0.460
+[CHECKPOINT] Saved fold1_best_auc_0.898.pt
+Epoch 11 | train acc 0.755 | val acc 0.788 | train loss 0.555 | val loss 0.444
+[CHECKPOINT] Saved fold1_best_auc_0.902.pt
+Epoch 12 | train acc 0.779 | val acc 0.783 | train loss 0.539 | val loss 0.435
+[CHECKPOINT] Saved fold1_best_auc_0.907.pt
+Epoch 13 | train acc 0.770 | val acc 0.799 | train loss 0.527 | val loss 0.421
+[CHECKPOINT] Saved fold1_best_auc_0.911.pt
+Epoch 14 | train acc 0.777 | val acc 0.793 | train loss 0.519 | val loss 0.412
+[CHECKPOINT] Saved fold1_best_auc_0.914.pt
+Epoch 15 | train acc 0.798 | val acc 0.804 | train loss 0.514 | val loss 0.401
+[CHECKPOINT] Saved fold1_best_auc_0.921.pt
+Epoch 16 | train acc 0.791 | val acc 0.821 | train loss 0.493 | val loss 0.393
+Epoch 17 | train acc 0.780 | val acc 0.810 | train loss 0.502 | val loss 0.380
+[CHECKPOINT] Saved fold1_best_auc_0.924.pt
+Epoch 18 | train acc 0.810 | val acc 0.832 | train loss 0.487 | val loss 0.375
+[CHECKPOINT] Saved fold1_best_auc_0.927.pt
+Epoch 19 | train acc 0.822 | val acc 0.826 | train loss 0.472 | val loss 0.369
+[CHECKPOINT] Saved fold1_best_auc_0.929.pt
+Epoch 20 | train acc 0.815 | val acc 0.837 | train loss 0.475 | val loss 0.361
+[CHECKPOINT] Saved fold1_best_auc_0.930.pt
+Epoch 21 | train acc 0.836 | val acc 0.837 | train loss 0.453 | val loss 0.358
+Epoch 22 | train acc 0.825 | val acc 0.848 | train loss 0.462 | val loss 0.351
+[CHECKPOINT] Saved fold1_best_auc_0.931.pt
+Epoch 23 | train acc 0.832 | val acc 0.826 | train loss 0.460 | val loss 0.348
+Epoch 24 | train acc 0.852 | val acc 0.832 | train loss 0.445 | val loss 0.345
+[CHECKPOINT] Saved fold1_best_auc_0.931.pt
+Epoch 25 | train acc 0.846 | val acc 0.821 | train loss 0.437 | val loss 0.341
+[CHECKPOINT] Saved fold1_best_auc_0.935.pt
+Epoch 26 | train acc 0.832 | val acc 0.837 | train loss 0.440 | val loss 0.335
+[CHECKPOINT] Saved fold1_best_auc_0.939.pt
+Epoch 27 | train acc 0.856 | val acc 0.842 | train loss 0.424 | val loss 0.325
+[CHECKPOINT] Saved fold1_best_auc_0.941.pt
+Epoch 28 | train acc 0.871 | val acc 0.848 | train loss 0.422 | val loss 0.325
+Epoch 29 | train acc 0.867 | val acc 0.853 | train loss 0.420 | val loss 0.317
+[CHECKPOINT] Saved fold1_best_auc_0.946.pt
+Epoch 30 | train acc 0.857 | val acc 0.848 | train loss 0.425 | val loss 0.314
+Epoch 31 | train acc 0.865 | val acc 0.864 | train loss 0.420 | val loss 0.312
+[CHECKPOINT] Saved fold1_best_auc_0.946.pt
+Epoch 32 | train acc 0.871 | val acc 0.853 | train loss 0.412 | val loss 0.313
+Epoch 33 | train acc 0.883 | val acc 0.842 | train loss 0.409 | val loss 0.305
+[CHECKPOINT] Saved fold1_best_auc_0.947.pt
+Epoch 34 | train acc 0.874 | val acc 0.837 | train loss 0.408 | val loss 0.310
+[CHECKPOINT] Saved fold1_best_auc_0.949.pt
+Epoch 35 | train acc 0.889 | val acc 0.859 | train loss 0.398 | val loss 0.299
+Epoch 36 | train acc 0.887 | val acc 0.859 | train loss 0.393 | val loss 0.293
+[CHECKPOINT] Saved fold1_best_auc_0.954.pt
+Epoch 37 | train acc 0.882 | val acc 0.875 | train loss 0.394 | val loss 0.290
+[CHECKPOINT] Saved fold1_best_auc_0.955.pt
+Epoch 38 | train acc 0.908 | val acc 0.864 | train loss 0.382 | val loss 0.287
+[CHECKPOINT] Saved fold1_best_auc_0.959.pt
+Epoch 39 | train acc 0.887 | val acc 0.875 | train loss 0.381 | val loss 0.293
+Epoch 40 | train acc 0.897 | val acc 0.886 | train loss 0.379 | val loss 0.276
+[CHECKPOINT] Saved fold1_best_auc_0.960.pt
+Epoch 41 | train acc 0.905 | val acc 0.880 | train loss 0.371 | val loss 0.274
+[CHECKPOINT] Saved fold1_best_auc_0.960.pt
+Epoch 42 | train acc 0.901 | val acc 0.891 | train loss 0.373 | val loss 0.268
+[CHECKPOINT] Saved fold1_best_auc_0.964.pt
+Epoch 43 | train acc 0.906 | val acc 0.880 | train loss 0.370 | val loss 0.270
+Epoch 44 | train acc 0.916 | val acc 0.891 | train loss 0.364 | val loss 0.262
+[CHECKPOINT] Saved fold1_best_auc_0.965.pt
+Epoch 45 | train acc 0.936 | val acc 0.859 | train loss 0.349 | val loss 0.278
+[CHECKPOINT] Saved fold1_best_auc_0.966.pt
+Epoch 46 | train acc 0.898 | val acc 0.880 | train loss 0.372 | val loss 0.262
+Epoch 47 | train acc 0.905 | val acc 0.891 | train loss 0.356 | val loss 0.250
+[CHECKPOINT] Saved fold1_best_auc_0.968.pt
+Epoch 48 | train acc 0.904 | val acc 0.891 | train loss 0.359 | val loss 0.251
+Epoch 49 | train acc 0.906 | val acc 0.886 | train loss 0.355 | val loss 0.247
+[CHECKPOINT] Saved fold1_best_auc_0.969.pt
+Epoch 50 | train acc 0.906 | val acc 0.880 | train loss 0.351 | val loss 0.250
+[CHECKPOINT] Saved fold1_best_auc_0.973.pt
+--- FINAL METRICS ---
+acc       : 0.9021739130434783
+precision : 0.9347826086956522
+recall    : 0.8775510204081632
+f1        : 0.9052631578947369
+roc_auc   : 0.9727100142382534
+threshold : 0.6898951530456543
+Plots saved for fold.
+Fold 2/5
+Epoch 01 | train acc 0.541 | val acc 0.560 | train loss 0.705 | val loss 0.665
+[CHECKPOINT] Saved fold2_best_auc_0.624.pt
+Epoch 02 | train acc 0.586 | val acc 0.598 | train loss 0.680 | val loss 0.640
+[CHECKPOINT] Saved fold2_best_auc_0.706.pt
+Epoch 03 | train acc 0.561 | val acc 0.652 | train loss 0.684 | val loss 0.617
+[CHECKPOINT] Saved fold2_best_auc_0.750.pt
+Epoch 04 | train acc 0.575 | val acc 0.712 | train loss 0.665 | val loss 0.596
+[CHECKPOINT] Saved fold2_best_auc_0.781.pt
+Epoch 05 | train acc 0.629 | val acc 0.668 | train loss 0.644 | val loss 0.578
+[CHECKPOINT] Saved fold2_best_auc_0.790.pt
+Epoch 06 | train acc 0.647 | val acc 0.701 | train loss 0.632 | val loss 0.562
+[CHECKPOINT] Saved fold2_best_auc_0.805.pt
+Epoch 07 | train acc 0.654 | val acc 0.745 | train loss 0.629 | val loss 0.540
+[CHECKPOINT] Saved fold2_best_auc_0.816.pt
+Epoch 08 | train acc 0.723 | val acc 0.728 | train loss 0.593 | val loss 0.520
+[CHECKPOINT] Saved fold2_best_auc_0.843.pt
+Epoch 09 | train acc 0.732 | val acc 0.761 | train loss 0.587 | val loss 0.499
+[CHECKPOINT] Saved fold2_best_auc_0.852.pt
+Epoch 10 | train acc 0.720 | val acc 0.761 | train loss 0.573 | val loss 0.482
+[CHECKPOINT] Saved fold2_best_auc_0.865.pt
+Epoch 11 | train acc 0.765 | val acc 0.783 | train loss 0.554 | val loss 0.467
+[CHECKPOINT] Saved fold2_best_auc_0.870.pt
+Epoch 12 | train acc 0.766 | val acc 0.788 | train loss 0.544 | val loss 0.446
+[CHECKPOINT] Saved fold2_best_auc_0.886.pt
+Epoch 13 | train acc 0.761 | val acc 0.777 | train loss 0.542 | val loss 0.435
+[CHECKPOINT] Saved fold2_best_auc_0.890.pt
+Epoch 14 | train acc 0.773 | val acc 0.783 | train loss 0.532 | val loss 0.430
+Epoch 15 | train acc 0.764 | val acc 0.804 | train loss 0.528 | val loss 0.419
+[CHECKPOINT] Saved fold2_best_auc_0.895.pt
+Epoch 16 | train acc 0.768 | val acc 0.810 | train loss 0.515 | val loss 0.419
+Epoch 17 | train acc 0.777 | val acc 0.799 | train loss 0.507 | val loss 0.403
+[CHECKPOINT] Saved fold2_best_auc_0.903.pt
+Epoch 18 | train acc 0.798 | val acc 0.821 | train loss 0.505 | val loss 0.395
+[CHECKPOINT] Saved fold2_best_auc_0.906.pt
+Epoch 19 | train acc 0.812 | val acc 0.810 | train loss 0.479 | val loss 0.390
+[CHECKPOINT] Saved fold2_best_auc_0.910.pt
+Epoch 20 | train acc 0.779 | val acc 0.832 | train loss 0.500 | val loss 0.383
+[CHECKPOINT] Saved fold2_best_auc_0.915.pt
+Epoch 21 | train acc 0.803 | val acc 0.821 | train loss 0.478 | val loss 0.376
+[CHECKPOINT] Saved fold2_best_auc_0.916.pt
+Epoch 22 | train acc 0.808 | val acc 0.837 | train loss 0.470 | val loss 0.379
+Epoch 23 | train acc 0.818 | val acc 0.837 | train loss 0.471 | val loss 0.372
+[CHECKPOINT] Saved fold2_best_auc_0.918.pt
+Epoch 24 | train acc 0.822 | val acc 0.826 | train loss 0.460 | val loss 0.369
+[CHECKPOINT] Saved fold2_best_auc_0.918.pt
+Epoch 25 | train acc 0.814 | val acc 0.842 | train loss 0.467 | val loss 0.359
+[CHECKPOINT] Saved fold2_best_auc_0.922.pt
+Epoch 26 | train acc 0.834 | val acc 0.826 | train loss 0.453 | val loss 0.358
+Epoch 27 | train acc 0.829 | val acc 0.842 | train loss 0.451 | val loss 0.350
+[CHECKPOINT] Saved fold2_best_auc_0.924.pt
+Epoch 28 | train acc 0.827 | val acc 0.837 | train loss 0.450 | val loss 0.350
+[CHECKPOINT] Saved fold2_best_auc_0.924.pt
+Epoch 29 | train acc 0.833 | val acc 0.842 | train loss 0.447 | val loss 0.349
+[CHECKPOINT] Saved fold2_best_auc_0.930.pt
+Epoch 30 | train acc 0.841 | val acc 0.859 | train loss 0.438 | val loss 0.338
+[CHECKPOINT] Saved fold2_best_auc_0.932.pt
+Epoch 31 | train acc 0.829 | val acc 0.848 | train loss 0.441 | val loss 0.342
+[CHECKPOINT] Saved fold2_best_auc_0.934.pt
+Epoch 32 | train acc 0.845 | val acc 0.842 | train loss 0.432 | val loss 0.333
+Epoch 33 | train acc 0.845 | val acc 0.848 | train loss 0.417 | val loss 0.325
+[CHECKPOINT] Saved fold2_best_auc_0.936.pt
+Epoch 34 | train acc 0.844 | val acc 0.859 | train loss 0.426 | val loss 0.331
+[CHECKPOINT] Saved fold2_best_auc_0.937.pt
+Epoch 35 | train acc 0.855 | val acc 0.859 | train loss 0.426 | val loss 0.322
+[CHECKPOINT] Saved fold2_best_auc_0.941.pt
+Epoch 36 | train acc 0.840 | val acc 0.864 | train loss 0.428 | val loss 0.312
+[CHECKPOINT] Saved fold2_best_auc_0.942.pt
+Epoch 37 | train acc 0.852 | val acc 0.842 | train loss 0.426 | val loss 0.317
+[CHECKPOINT] Saved fold2_best_auc_0.942.pt
+Epoch 38 | train acc 0.868 | val acc 0.853 | train loss 0.410 | val loss 0.321
+[CHECKPOINT] Saved fold2_best_auc_0.942.pt
+Epoch 39 | train acc 0.853 | val acc 0.870 | train loss 0.406 | val loss 0.302
+[CHECKPOINT] Saved fold2_best_auc_0.947.pt
+Epoch 40 | train acc 0.861 | val acc 0.842 | train loss 0.409 | val loss 0.319
+[CHECKPOINT] Saved fold2_best_auc_0.947.pt
+Epoch 41 | train acc 0.870 | val acc 0.853 | train loss 0.407 | val loss 0.300
+Epoch 42 | train acc 0.861 | val acc 0.864 | train loss 0.404 | val loss 0.300
+Epoch 43 | train acc 0.870 | val acc 0.864 | train loss 0.394 | val loss 0.302
+[CHECKPOINT] Saved fold2_best_auc_0.949.pt
+Epoch 44 | train acc 0.883 | val acc 0.870 | train loss 0.387 | val loss 0.291
+[CHECKPOINT] Saved fold2_best_auc_0.950.pt
+Epoch 45 | train acc 0.882 | val acc 0.870 | train loss 0.390 | val loss 0.294
+[CHECKPOINT] Saved fold2_best_auc_0.951.pt
+Epoch 46 | train acc 0.899 | val acc 0.870 | train loss 0.386 | val loss 0.282
+[CHECKPOINT] Saved fold2_best_auc_0.953.pt
+Epoch 47 | train acc 0.894 | val acc 0.870 | train loss 0.384 | val loss 0.276
+[CHECKPOINT] Saved fold2_best_auc_0.954.pt
+Epoch 48 | train acc 0.879 | val acc 0.864 | train loss 0.379 | val loss 0.280
+[CHECKPOINT] Saved fold2_best_auc_0.955.pt
+Epoch 49 | train acc 0.882 | val acc 0.880 | train loss 0.386 | val loss 0.281
+Epoch 50 | train acc 0.874 | val acc 0.886 | train loss 0.382 | val loss 0.275
+--- FINAL METRICS ---
+acc       : 0.8858695652173914
+precision : 0.8811881188118812
+recall    : 0.9081632653061225
+f1        : 0.8944723618090452
+roc_auc   : 0.9539629805410537
+threshold : 0.5634222626686096
+Plots saved for fold.
+Fold 3/5
+Epoch 01 | train acc 0.550 | val acc 0.549 | train loss 0.701 | val loss 0.660
+[CHECKPOINT] Saved fold3_best_auc_0.683.pt
+Epoch 02 | train acc 0.542 | val acc 0.614 | train loss 0.685 | val loss 0.635
+[CHECKPOINT] Saved fold3_best_auc_0.748.pt
+Epoch 03 | train acc 0.533 | val acc 0.652 | train loss 0.685 | val loss 0.614
+[CHECKPOINT] Saved fold3_best_auc_0.781.pt
+Epoch 04 | train acc 0.579 | val acc 0.641 | train loss 0.666 | val loss 0.597
+[CHECKPOINT] Saved fold3_best_auc_0.797.pt
+Epoch 05 | train acc 0.596 | val acc 0.652 | train loss 0.660 | val loss 0.581
+[CHECKPOINT] Saved fold3_best_auc_0.810.pt
+Epoch 06 | train acc 0.647 | val acc 0.668 | train loss 0.645 | val loss 0.565
+[CHECKPOINT] Saved fold3_best_auc_0.824.pt
+Epoch 07 | train acc 0.648 | val acc 0.679 | train loss 0.645 | val loss 0.549
+[CHECKPOINT] Saved fold3_best_auc_0.825.pt
+Epoch 08 | train acc 0.673 | val acc 0.750 | train loss 0.625 | val loss 0.529
+[CHECKPOINT] Saved fold3_best_auc_0.838.pt
+Epoch 09 | train acc 0.689 | val acc 0.793 | train loss 0.610 | val loss 0.511
+[CHECKPOINT] Saved fold3_best_auc_0.852.pt
+Epoch 10 | train acc 0.721 | val acc 0.761 | train loss 0.583 | val loss 0.494
+[CHECKPOINT] Saved fold3_best_auc_0.860.pt
+Epoch 11 | train acc 0.708 | val acc 0.783 | train loss 0.586 | val loss 0.480
+[CHECKPOINT] Saved fold3_best_auc_0.869.pt
+Epoch 12 | train acc 0.742 | val acc 0.783 | train loss 0.568 | val loss 0.465
+[CHECKPOINT] Saved fold3_best_auc_0.879.pt
+Epoch 13 | train acc 0.762 | val acc 0.783 | train loss 0.557 | val loss 0.456
+Epoch 14 | train acc 0.730 | val acc 0.766 | train loss 0.558 | val loss 0.447
+[CHECKPOINT] Saved fold3_best_auc_0.884.pt
+Epoch 15 | train acc 0.747 | val acc 0.799 | train loss 0.543 | val loss 0.434
+[CHECKPOINT] Saved fold3_best_auc_0.890.pt
+Epoch 16 | train acc 0.768 | val acc 0.793 | train loss 0.528 | val loss 0.424
+[CHECKPOINT] Saved fold3_best_auc_0.892.pt
+Epoch 17 | train acc 0.792 | val acc 0.793 | train loss 0.515 | val loss 0.420
+[CHECKPOINT] Saved fold3_best_auc_0.894.pt
+Epoch 18 | train acc 0.770 | val acc 0.793 | train loss 0.511 | val loss 0.412
+[CHECKPOINT] Saved fold3_best_auc_0.898.pt
+Epoch 19 | train acc 0.803 | val acc 0.788 | train loss 0.499 | val loss 0.409
+Epoch 20 | train acc 0.788 | val acc 0.783 | train loss 0.506 | val loss 0.407
+Epoch 21 | train acc 0.793 | val acc 0.804 | train loss 0.493 | val loss 0.395
+[CHECKPOINT] Saved fold3_best_auc_0.905.pt
+Epoch 22 | train acc 0.791 | val acc 0.799 | train loss 0.487 | val loss 0.398
+Epoch 23 | train acc 0.823 | val acc 0.804 | train loss 0.468 | val loss 0.389
+Epoch 24 | train acc 0.811 | val acc 0.799 | train loss 0.468 | val loss 0.385
+[CHECKPOINT] Saved fold3_best_auc_0.907.pt
+Epoch 25 | train acc 0.819 | val acc 0.815 | train loss 0.465 | val loss 0.377
+[CHECKPOINT] Saved fold3_best_auc_0.911.pt
+Epoch 26 | train acc 0.836 | val acc 0.821 | train loss 0.459 | val loss 0.374
+[CHECKPOINT] Saved fold3_best_auc_0.911.pt
+Epoch 27 | train acc 0.837 | val acc 0.821 | train loss 0.453 | val loss 0.366
+[CHECKPOINT] Saved fold3_best_auc_0.915.pt
+Epoch 28 | train acc 0.825 | val acc 0.826 | train loss 0.454 | val loss 0.368
+[CHECKPOINT] Saved fold3_best_auc_0.917.pt
+Epoch 29 | train acc 0.836 | val acc 0.826 | train loss 0.443 | val loss 0.368
+[CHECKPOINT] Saved fold3_best_auc_0.919.pt
+Epoch 30 | train acc 0.840 | val acc 0.826 | train loss 0.433 | val loss 0.354
+[CHECKPOINT] Saved fold3_best_auc_0.922.pt
+Epoch 31 | train acc 0.853 | val acc 0.832 | train loss 0.431 | val loss 0.355
+[CHECKPOINT] Saved fold3_best_auc_0.926.pt
+Epoch 32 | train acc 0.838 | val acc 0.821 | train loss 0.435 | val loss 0.353
+Epoch 33 | train acc 0.837 | val acc 0.826 | train loss 0.436 | val loss 0.349
+Epoch 34 | train acc 0.852 | val acc 0.821 | train loss 0.420 | val loss 0.349
+[CHECKPOINT] Saved fold3_best_auc_0.926.pt
+Epoch 35 | train acc 0.844 | val acc 0.832 | train loss 0.426 | val loss 0.344
+[CHECKPOINT] Saved fold3_best_auc_0.928.pt
+Epoch 36 | train acc 0.848 | val acc 0.842 | train loss 0.414 | val loss 0.336
+[CHECKPOINT] Saved fold3_best_auc_0.930.pt
+Epoch 37 | train acc 0.863 | val acc 0.837 | train loss 0.402 | val loss 0.339
+Epoch 38 | train acc 0.856 | val acc 0.848 | train loss 0.411 | val loss 0.327
+[CHECKPOINT] Saved fold3_best_auc_0.933.pt
+Epoch 39 | train acc 0.867 | val acc 0.848 | train loss 0.405 | val loss 0.326
+[CHECKPOINT] Saved fold3_best_auc_0.936.pt
+Epoch 40 | train acc 0.882 | val acc 0.848 | train loss 0.395 | val loss 0.325
+Epoch 41 | train acc 0.889 | val acc 0.848 | train loss 0.391 | val loss 0.321
+[CHECKPOINT] Saved fold3_best_auc_0.937.pt
+Epoch 42 | train acc 0.890 | val acc 0.842 | train loss 0.377 | val loss 0.324
+Epoch 43 | train acc 0.880 | val acc 0.842 | train loss 0.390 | val loss 0.330
+Epoch 44 | train acc 0.889 | val acc 0.832 | train loss 0.385 | val loss 0.328
+Epoch 45 | train acc 0.880 | val acc 0.842 | train loss 0.383 | val loss 0.331
+[CHECKPOINT] Saved fold3_best_auc_0.937.pt
+Epoch 46 | train acc 0.875 | val acc 0.848 | train loss 0.380 | val loss 0.322
+[CHECKPOINT] Saved fold3_best_auc_0.941.pt
+Epoch 47 | train acc 0.889 | val acc 0.853 | train loss 0.374 | val loss 0.308
+[CHECKPOINT] Saved fold3_best_auc_0.942.pt
+Epoch 48 | train acc 0.885 | val acc 0.859 | train loss 0.376 | val loss 0.310
+Epoch 49 | train acc 0.893 | val acc 0.842 | train loss 0.366 | val loss 0.314
+Epoch 50 | train acc 0.901 | val acc 0.864 | train loss 0.370 | val loss 0.308
+[CHECKPOINT] Saved fold3_best_auc_0.943.pt
+--- FINAL METRICS ---
+acc       : 0.8695652173913043
+precision : 0.9204545454545454
+recall    : 0.826530612244898
+f1        : 0.8709677419354839
+roc_auc   : 0.9434029425723778
+threshold : 0.5838079452514648
+Plots saved for fold.
+Fold 4/5
+Epoch 01 | train acc 0.471 | val acc 0.538 | train loss 0.723 | val loss 0.692
+[CHECKPOINT] Saved fold4_best_auc_0.533.pt
+Epoch 02 | train acc 0.545 | val acc 0.576 | train loss 0.701 | val loss 0.670
+[CHECKPOINT] Saved fold4_best_auc_0.605.pt
+Epoch 03 | train acc 0.534 | val acc 0.620 | train loss 0.687 | val loss 0.655
+[CHECKPOINT] Saved fold4_best_auc_0.650.pt
+Epoch 04 | train acc 0.582 | val acc 0.620 | train loss 0.668 | val loss 0.640
+[CHECKPOINT] Saved fold4_best_auc_0.684.pt
+Epoch 05 | train acc 0.629 | val acc 0.652 | train loss 0.646 | val loss 0.628
+[CHECKPOINT] Saved fold4_best_auc_0.711.pt
+Epoch 06 | train acc 0.607 | val acc 0.636 | train loss 0.655 | val loss 0.618
+[CHECKPOINT] Saved fold4_best_auc_0.722.pt
+Epoch 07 | train acc 0.639 | val acc 0.663 | train loss 0.643 | val loss 0.597
+[CHECKPOINT] Saved fold4_best_auc_0.760.pt
+Epoch 08 | train acc 0.685 | val acc 0.712 | train loss 0.616 | val loss 0.582
+[CHECKPOINT] Saved fold4_best_auc_0.782.pt
+Epoch 09 | train acc 0.681 | val acc 0.723 | train loss 0.620 | val loss 0.561
+[CHECKPOINT] Saved fold4_best_auc_0.812.pt
+Epoch 10 | train acc 0.693 | val acc 0.739 | train loss 0.608 | val loss 0.547
+[CHECKPOINT] Saved fold4_best_auc_0.825.pt
+Epoch 11 | train acc 0.693 | val acc 0.761 | train loss 0.594 | val loss 0.522
+[CHECKPOINT] Saved fold4_best_auc_0.850.pt
+Epoch 12 | train acc 0.727 | val acc 0.788 | train loss 0.583 | val loss 0.506
+[CHECKPOINT] Saved fold4_best_auc_0.864.pt
+Epoch 13 | train acc 0.736 | val acc 0.799 | train loss 0.574 | val loss 0.485
+[CHECKPOINT] Saved fold4_best_auc_0.874.pt
+Epoch 14 | train acc 0.751 | val acc 0.799 | train loss 0.556 | val loss 0.470
+[CHECKPOINT] Saved fold4_best_auc_0.880.pt
+Epoch 15 | train acc 0.764 | val acc 0.804 | train loss 0.553 | val loss 0.453
+[CHECKPOINT] Saved fold4_best_auc_0.888.pt
+Epoch 16 | train acc 0.751 | val acc 0.799 | train loss 0.556 | val loss 0.440
+[CHECKPOINT] Saved fold4_best_auc_0.894.pt
+Epoch 17 | train acc 0.781 | val acc 0.826 | train loss 0.534 | val loss 0.425
+[CHECKPOINT] Saved fold4_best_auc_0.901.pt
+Epoch 18 | train acc 0.791 | val acc 0.815 | train loss 0.521 | val loss 0.412
+[CHECKPOINT] Saved fold4_best_auc_0.911.pt
+Epoch 19 | train acc 0.795 | val acc 0.821 | train loss 0.508 | val loss 0.402
+[CHECKPOINT] Saved fold4_best_auc_0.915.pt
+Epoch 20 | train acc 0.802 | val acc 0.837 | train loss 0.495 | val loss 0.393
+Epoch 21 | train acc 0.783 | val acc 0.848 | train loss 0.510 | val loss 0.391
+Epoch 22 | train acc 0.781 | val acc 0.848 | train loss 0.501 | val loss 0.378
+[CHECKPOINT] Saved fold4_best_auc_0.918.pt
+Epoch 23 | train acc 0.803 | val acc 0.853 | train loss 0.482 | val loss 0.371
+[CHECKPOINT] Saved fold4_best_auc_0.920.pt
+Epoch 24 | train acc 0.810 | val acc 0.853 | train loss 0.473 | val loss 0.367
+[CHECKPOINT] Saved fold4_best_auc_0.926.pt
+Epoch 25 | train acc 0.800 | val acc 0.842 | train loss 0.479 | val loss 0.358
+Epoch 26 | train acc 0.826 | val acc 0.864 | train loss 0.454 | val loss 0.355
+[CHECKPOINT] Saved fold4_best_auc_0.927.pt
+Epoch 27 | train acc 0.822 | val acc 0.848 | train loss 0.471 | val loss 0.345
+[CHECKPOINT] Saved fold4_best_auc_0.931.pt
+Epoch 28 | train acc 0.833 | val acc 0.864 | train loss 0.447 | val loss 0.338
+[CHECKPOINT] Saved fold4_best_auc_0.932.pt
+Epoch 29 | train acc 0.827 | val acc 0.848 | train loss 0.450 | val loss 0.335
+[CHECKPOINT] Saved fold4_best_auc_0.935.pt
+Epoch 30 | train acc 0.830 | val acc 0.853 | train loss 0.446 | val loss 0.327
+[CHECKPOINT] Saved fold4_best_auc_0.938.pt
+Epoch 31 | train acc 0.852 | val acc 0.853 | train loss 0.433 | val loss 0.320
+[CHECKPOINT] Saved fold4_best_auc_0.941.pt
+Epoch 32 | train acc 0.845 | val acc 0.864 | train loss 0.441 | val loss 0.319
+[CHECKPOINT] Saved fold4_best_auc_0.944.pt
+Epoch 33 | train acc 0.842 | val acc 0.853 | train loss 0.430 | val loss 0.310
+[CHECKPOINT] Saved fold4_best_auc_0.946.pt
+Epoch 34 | train acc 0.851 | val acc 0.853 | train loss 0.424 | val loss 0.301
+[CHECKPOINT] Saved fold4_best_auc_0.951.pt
+Epoch 35 | train acc 0.842 | val acc 0.864 | train loss 0.434 | val loss 0.296
+[CHECKPOINT] Saved fold4_best_auc_0.952.pt
+Epoch 36 | train acc 0.851 | val acc 0.864 | train loss 0.422 | val loss 0.296
+Epoch 37 | train acc 0.864 | val acc 0.864 | train loss 0.409 | val loss 0.294
+Epoch 38 | train acc 0.853 | val acc 0.864 | train loss 0.417 | val loss 0.289
+[CHECKPOINT] Saved fold4_best_auc_0.952.pt
+Epoch 39 | train acc 0.863 | val acc 0.880 | train loss 0.403 | val loss 0.288
+[CHECKPOINT] Saved fold4_best_auc_0.955.pt
+Epoch 40 | train acc 0.848 | val acc 0.880 | train loss 0.415 | val loss 0.310
+Epoch 41 | train acc 0.861 | val acc 0.875 | train loss 0.408 | val loss 0.283
+Epoch 42 | train acc 0.863 | val acc 0.880 | train loss 0.399 | val loss 0.289
+[CHECKPOINT] Saved fold4_best_auc_0.956.pt
+Epoch 43 | train acc 0.874 | val acc 0.891 | train loss 0.401 | val loss 0.276
+[CHECKPOINT] Saved fold4_best_auc_0.957.pt
+Epoch 44 | train acc 0.861 | val acc 0.880 | train loss 0.399 | val loss 0.282
+[CHECKPOINT] Saved fold4_best_auc_0.958.pt
+Epoch 45 | train acc 0.865 | val acc 0.897 | train loss 0.402 | val loss 0.269
+[CHECKPOINT] Saved fold4_best_auc_0.960.pt
+Epoch 46 | train acc 0.880 | val acc 0.902 | train loss 0.396 | val loss 0.261
+[CHECKPOINT] Saved fold4_best_auc_0.963.pt
+Epoch 47 | train acc 0.890 | val acc 0.897 | train loss 0.382 | val loss 0.250
+[CHECKPOINT] Saved fold4_best_auc_0.967.pt
+Epoch 48 | train acc 0.875 | val acc 0.902 | train loss 0.386 | val loss 0.248
+[CHECKPOINT] Saved fold4_best_auc_0.967.pt
+Epoch 49 | train acc 0.876 | val acc 0.908 | train loss 0.387 | val loss 0.246
+Epoch 50 | train acc 0.885 | val acc 0.891 | train loss 0.378 | val loss 0.243
+[CHECKPOINT] Saved fold4_best_auc_0.970.pt
+--- FINAL METRICS ---
+acc       : 0.9184782608695652
+precision : 0.9108910891089109
+recall    : 0.9387755102040817
+f1        : 0.9246231155778895
+roc_auc   : 0.9698623635500713
+threshold : 0.36946237087249756
+Plots saved for fold.
+Fold 5/5
+Epoch 01 | train acc 0.541 | val acc 0.641 | train loss 0.696 | val loss 0.654
+[CHECKPOINT] Saved fold5_best_auc_0.696.pt
+Epoch 02 | train acc 0.558 | val acc 0.565 | train loss 0.684 | val loss 0.638
+Epoch 03 | train acc 0.630 | val acc 0.647 | train loss 0.662 | val loss 0.628
+Epoch 04 | train acc 0.652 | val acc 0.663 | train loss 0.641 | val loss 0.613
+[CHECKPOINT] Saved fold5_best_auc_0.705.pt
+Epoch 05 | train acc 0.654 | val acc 0.663 | train loss 0.628 | val loss 0.602
+[CHECKPOINT] Saved fold5_best_auc_0.709.pt
+Epoch 06 | train acc 0.658 | val acc 0.674 | train loss 0.624 | val loss 0.589
+[CHECKPOINT] Saved fold5_best_auc_0.723.pt
+Epoch 07 | train acc 0.708 | val acc 0.679 | train loss 0.597 | val loss 0.583
+[CHECKPOINT] Saved fold5_best_auc_0.739.pt
+Epoch 08 | train acc 0.698 | val acc 0.679 | train loss 0.607 | val loss 0.567
+[CHECKPOINT] Saved fold5_best_auc_0.750.pt
+Epoch 09 | train acc 0.717 | val acc 0.685 | train loss 0.582 | val loss 0.558
+[CHECKPOINT] Saved fold5_best_auc_0.759.pt
+Epoch 10 | train acc 0.755 | val acc 0.690 | train loss 0.567 | val loss 0.544
+[CHECKPOINT] Saved fold5_best_auc_0.781.pt
+Epoch 11 | train acc 0.739 | val acc 0.696 | train loss 0.563 | val loss 0.541
+[CHECKPOINT] Saved fold5_best_auc_0.785.pt
+Epoch 12 | train acc 0.769 | val acc 0.701 | train loss 0.536 | val loss 0.526
+[CHECKPOINT] Saved fold5_best_auc_0.804.pt
+Epoch 13 | train acc 0.777 | val acc 0.707 | train loss 0.538 | val loss 0.511
+[CHECKPOINT] Saved fold5_best_auc_0.818.pt
+Epoch 14 | train acc 0.760 | val acc 0.707 | train loss 0.540 | val loss 0.517
+[CHECKPOINT] Saved fold5_best_auc_0.830.pt
+Epoch 15 | train acc 0.798 | val acc 0.707 | train loss 0.516 | val loss 0.497
+[CHECKPOINT] Saved fold5_best_auc_0.838.pt
+Epoch 16 | train acc 0.774 | val acc 0.712 | train loss 0.511 | val loss 0.490
+Epoch 17 | train acc 0.799 | val acc 0.717 | train loss 0.500 | val loss 0.478
+[CHECKPOINT] Saved fold5_best_auc_0.854.pt
+Epoch 18 | train acc 0.796 | val acc 0.717 | train loss 0.489 | val loss 0.470
+[CHECKPOINT] Saved fold5_best_auc_0.859.pt
+Epoch 19 | train acc 0.822 | val acc 0.728 | train loss 0.481 | val loss 0.461
+[CHECKPOINT] Saved fold5_best_auc_0.865.pt
+Epoch 20 | train acc 0.821 | val acc 0.739 | train loss 0.471 | val loss 0.452
+[CHECKPOINT] Saved fold5_best_auc_0.869.pt
+Epoch 21 | train acc 0.841 | val acc 0.728 | train loss 0.463 | val loss 0.445
+Epoch 22 | train acc 0.837 | val acc 0.745 | train loss 0.457 | val loss 0.449
+[CHECKPOINT] Saved fold5_best_auc_0.871.pt
+Epoch 23 | train acc 0.825 | val acc 0.745 | train loss 0.454 | val loss 0.439
+[CHECKPOINT] Saved fold5_best_auc_0.876.pt
+Epoch 24 | train acc 0.823 | val acc 0.750 | train loss 0.448 | val loss 0.429
+[CHECKPOINT] Saved fold5_best_auc_0.880.pt
+Epoch 25 | train acc 0.837 | val acc 0.745 | train loss 0.439 | val loss 0.425
+[CHECKPOINT] Saved fold5_best_auc_0.887.pt
+Epoch 26 | train acc 0.852 | val acc 0.755 | train loss 0.422 | val loss 0.416
+[CHECKPOINT] Saved fold5_best_auc_0.891.pt
+Epoch 27 | train acc 0.838 | val acc 0.761 | train loss 0.441 | val loss 0.415
+[CHECKPOINT] Saved fold5_best_auc_0.892.pt
+Epoch 28 | train acc 0.846 | val acc 0.766 | train loss 0.427 | val loss 0.408
+[CHECKPOINT] Saved fold5_best_auc_0.893.pt
+Epoch 29 | train acc 0.851 | val acc 0.777 | train loss 0.414 | val loss 0.402
+[CHECKPOINT] Saved fold5_best_auc_0.897.pt
+Epoch 30 | train acc 0.875 | val acc 0.783 | train loss 0.401 | val loss 0.390
+[CHECKPOINT] Saved fold5_best_auc_0.899.pt
+Epoch 31 | train acc 0.879 | val acc 0.793 | train loss 0.402 | val loss 0.374
+[CHECKPOINT] Saved fold5_best_auc_0.909.pt
+Epoch 32 | train acc 0.871 | val acc 0.788 | train loss 0.406 | val loss 0.381
+[CHECKPOINT] Saved fold5_best_auc_0.910.pt
+Epoch 33 | train acc 0.865 | val acc 0.815 | train loss 0.406 | val loss 0.361
+[CHECKPOINT] Saved fold5_best_auc_0.918.pt
+Epoch 34 | train acc 0.891 | val acc 0.810 | train loss 0.389 | val loss 0.362
+Epoch 35 | train acc 0.876 | val acc 0.793 | train loss 0.393 | val loss 0.373
+[CHECKPOINT] Saved fold5_best_auc_0.919.pt
+Epoch 36 | train acc 0.882 | val acc 0.810 | train loss 0.387 | val loss 0.346
+[CHECKPOINT] Saved fold5_best_auc_0.927.pt
+Epoch 37 | train acc 0.878 | val acc 0.842 | train loss 0.382 | val loss 0.352
+Epoch 38 | train acc 0.876 | val acc 0.810 | train loss 0.388 | val loss 0.357
+Epoch 39 | train acc 0.904 | val acc 0.837 | train loss 0.366 | val loss 0.327
+[CHECKPOINT] Saved fold5_best_auc_0.935.pt
+Epoch 40 | train acc 0.910 | val acc 0.837 | train loss 0.369 | val loss 0.332
+Epoch 41 | train acc 0.889 | val acc 0.859 | train loss 0.366 | val loss 0.328
+[CHECKPOINT] Saved fold5_best_auc_0.936.pt
+Epoch 42 | train acc 0.895 | val acc 0.842 | train loss 0.360 | val loss 0.307
+[CHECKPOINT] Saved fold5_best_auc_0.943.pt
+Epoch 43 | train acc 0.904 | val acc 0.842 | train loss 0.360 | val loss 0.318
+Epoch 44 | train acc 0.916 | val acc 0.837 | train loss 0.354 | val loss 0.309
+Epoch 45 | train acc 0.905 | val acc 0.859 | train loss 0.355 | val loss 0.300
+[CHECKPOINT] Saved fold5_best_auc_0.946.pt
+Epoch 46 | train acc 0.908 | val acc 0.859 | train loss 0.356 | val loss 0.298
+[CHECKPOINT] Saved fold5_best_auc_0.947.pt
+Epoch 47 | train acc 0.918 | val acc 0.853 | train loss 0.344 | val loss 0.297
+Epoch 48 | train acc 0.921 | val acc 0.859 | train loss 0.340 | val loss 0.307
+Epoch 49 | train acc 0.927 | val acc 0.853 | train loss 0.332 | val loss 0.288
+[CHECKPOINT] Saved fold5_best_auc_0.949.pt
+Epoch 50 | train acc 0.917 | val acc 0.853 | train loss 0.339 | val loss 0.293
+--- FINAL METRICS ---
+acc       : 0.8641304347826086
+precision : 0.811965811965812
+recall    : 0.9693877551020408
+f1        : 0.8837209302325582
+roc_auc   : 0.9467252017085903
+threshold : 0.3208453357219696
+Plots saved for fold.
+===== AVERAGE METRICS ACROSS FOLDS =====
+acc       : 0.8880
+precision : 0.8919
+recall    : 0.9041
+f1        : 0.8958
+roc_auc   : 0.9573
