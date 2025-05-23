@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 """
-Milestone 1 – Early Parkinson's Detection Using Speech Analysis
+Milestone 1 - Early Parkinson's Detection Using Speech Analysis
 **Windowed data pipeline + LSTM baseline**
 --------------------------------------------------------------
-*This version fixes the empty‑dataset crash (num_samples=0) by*
+*This version fixes the empty-dataset crash (num_samples=0) by*
 
-1. **Always generating overlapping 2‑s windows** with `cache_all_windows`.
-2. Adding clear sanity checks that print how many *.npy* files were found
+1. **Always generating overlapping 2-s windows** with `cache_all_windows`.
+2. Adding clear sanity checks that print how many *.npy* files were found
    and how many belong to each dataset split.
 3. Aborting early (with a helpful message) if no cached files are found,
    so you never hit the RandomSampler error again.
 
 Usage examples
 ```
-python milestone1_windowed.py            # quick 10‑epoch smoke test
+python milestone1_windowed.py            # quick 10-epoch smoke test
 python milestone1_windowed.py -e 50 --plot   # longer run + plots
 ```
 """
@@ -46,17 +46,17 @@ PLOT_DIR        = Path("artifacts/plots")
 CHECKPOINT_DIR  = Path("artifacts/checkpoints")
 STATS_DIR       = Path("artifacts/stats")
 
-SAMPLE_RATE = 16_000  # 16 kHz
+SAMPLE_RATE = 16_000  # 16 kHz
 N_MELS      = 64
-HOP_LENGTH  = 160      # 10 ms → 100 frames/s
-WIN_LENGTH  = 400      # 25 ms
+HOP_LENGTH  = 160      # 10 ms → 100 frames/s
+WIN_LENGTH  = 400      # 25 ms
 FMIN, FMAX  = 50, 4_000
 
 # ---- Window params ----
 WINDOW_SEC   = 2.0
 FRAMES_PER_S = SAMPLE_RATE // HOP_LENGTH  # 100
 WIN_FRAMES   = int(WINDOW_SEC * FRAMES_PER_S)  # 200 frames / window
-HOP_FRAMES   = WIN_FRAMES // 2  # 50 % overlap (1 s)
+HOP_FRAMES   = WIN_FRAMES // 2  # 50 % overlap (1 s)
 PAD_VALUE_DB = -80.0
 # -------------------------------------------------
 
@@ -67,7 +67,7 @@ NUM_WORKERS = os.cpu_count() or 2
 # ---------- Utility helpers ----------
 
 def list_wav_files() -> List[Tuple[Path, int]]:
-    """Return list of (file_path, label) where label 0 = HC, 1 = PD."""
+    """Return list of (file_path, label) where label 0 = HC, 1 = PD."""
     out: list[tuple[Path, int]] = []
     for label_name, label in [("HC_AH", 0), ("PD_AH", 1)]:
         for wav in (DATA_ROOT / label_name).glob("*.wav"):
@@ -78,17 +78,17 @@ def list_wav_files() -> List[Tuple[Path, int]]:
 def plot_spectrogram(spec: np.ndarray, wav: Path, label_prefix: str):
     plt.figure(figsize=(10, 4))
     plt.imshow(spec.T, aspect="auto", origin="lower")
-    plt.colorbar(format="%+2.0f dB")
-    plt.title(f"Log‑mel spectrogram – {wav.name} ({label_prefix})")
-    plt.xlabel("Time (frames)")
-    plt.ylabel("Mel bands")
+    plt.colorbar(format="%+2.0f dB")
+    plt.title(f"Log-mel spectrogram - {wav.name} ({label_prefix})")
+    plt.xlabel("Time (frames)")
+    plt.ylabel("Mel bands")
     plt.tight_layout()
     plt.savefig(PLOT_DIR / f"{label_prefix}_{wav.stem}.png")
     plt.close()
 
 
 def cache_all_windows(plot: bool = False):
-    """Slice each recording into 2‑s windows (50 % overlap) and cache them."""
+    """Slice each recording into 2-s windows (50 % overlap) and cache them."""
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
     PLOT_DIR .mkdir(parents=True, exist_ok=True)
 
@@ -121,11 +121,11 @@ def cache_all_windows(plot: bool = False):
 
             if plot and win_idx == 0:
                 plot_spectrogram(window, wav, label_pf)
-    print("[cache_all_windows] DONE – cached 2‑s windows under", CACHE_DIR)
+    print("[cache_all_windows] DONE - cached 2-s windows under", CACHE_DIR)
 
 # ---------- Dataset ----------
 class ParkinsonDataset(Dataset):
-    """Window‑level dataset. Each item → (T=200, M=64)."""
+    """Window-level dataset. Each item → (T=200, M=64)."""
     def __init__(self, files: List[Path]):
         self.files  = files
         self.labels = [0 if f.name.startswith("HC_") else 1 for f in files]
@@ -134,7 +134,7 @@ class ParkinsonDataset(Dataset):
         return len(self.files)
 
     def __getitem__(self, idx):
-        spec = np.load(self.files[idx])  # (T, M)
+        spec = np.load(self.files[idx])  # (T, M)
         return torch.from_numpy(spec), torch.tensor(self.labels[idx], dtype=torch.float32)
 
 # ---------- Model ----------
@@ -145,7 +145,7 @@ class LSTMAudioClassifier(nn.Module):
                             num_layers=num_layers, batch_first=True, dropout=dropout)
         self.out  = nn.Sequential(nn.LayerNorm(hidden_size), nn.Linear(hidden_size, 1))
 
-    def forward(self, x):  # x: (B, T, M)
+    def forward(self, x):  # x: (B, T, M)
         out, _ = self.lstm(x)
         return self.out(out[:, -1, :]).squeeze(1)
 
@@ -225,12 +225,12 @@ def plot_roc_curve(y_true: np.ndarray, probs: np.ndarray, path: Path):
 
 
 
-# ---------- Helper: speaker‑level split ----------
+# ---------- Helper: speaker-level split ----------
 
 def make_splits():
     all_npys = sorted(CACHE_DIR.glob("*.npy"))
     if not all_npys:
-        raise RuntimeError("No .npy files found – run with --recache or check paths!")
+        raise RuntimeError("No .npy files found - run with --recache or check paths!")
 
     stems = {p.stem.rsplit("_win", 1)[0] for p in all_npys}
     labels_per_stem = [0 if s.startswith("HC_") else 1 for s in stems]
@@ -270,21 +270,21 @@ def main():
     argp = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     argp.add_argument("-e", "--epochs", type=int, default=10, help="Number of epochs")
     argp.add_argument("--plot", action="store_true", help="Save one spectrogram per speaker")
-    argp.add_argument("--recache", action="store_true", help="Force re‑compute windows")
+    argp.add_argument("--recache", action="store_true", help="Force re-compute windows")
     args = argp.parse_args()
 
-    print("EXECUTION TIME:", datetime.now().strftime("%Y‑%m‑%d %H:%M:%S"))
+    print("EXECUTION TIME:", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     if args.recache or not any(CACHE_DIR.glob("*.npy")):
         cache_all_windows(args.plot)
     else:
-        print("[info] Found cached windows – skipping preprocessing.")
+        print("[info] Found cached windows - skipping preprocessing.")
 
     train_files, val_files = make_splits()
-    print(f"Train windows: {len(train_files)},  Val windows: {len(val_files)}")
+    print(f"Train windows: {len(train_files)},  Val windows: {len(val_files)}")
 
     if len(train_files) == 0:
-        raise RuntimeError("Zero train examples – check CACHE_DIR content and file naming!")
+        raise RuntimeError("Zero train examples - check CACHE_DIR content and file naming!")
 
     train_dl = DataLoader(ParkinsonDataset(train_files), batch_size=BATCH_SIZE,
                           shuffle=True, num_workers=NUM_WORKERS)
