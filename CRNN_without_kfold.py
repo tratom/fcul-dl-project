@@ -32,7 +32,7 @@ from sklearn.model_selection import StratifiedKFold
 
 # -------------------- CONFIG --------------------
 
-DATA_ROOT      = Path("train-test-split") # Path("data-source/audio")
+DATA_ROOT      = Path("data_original+aug") # Path("data-source/audio")
 AUG_DIR        = Path("artifacts/augmented_audio")
 PLOT_DIR       = Path("milestone2/plots_augmented")
 CHECKPOINT_DIR = Path("milestone2/checkpoints_augmented")
@@ -240,11 +240,11 @@ def main() -> None:
 
     print(f"EXECUTION TIME: {datetime.now():%Y-%m-%d %H:%M:%S}")
 
-    # 1) PREPROCESS
-    for split in ('training','validation'):
+    # 1) PREPROCESS (now including test)
+    for split in ('training','validation','test'):
         for lbl in ('HC_AH','PD_AH'):
             wav_dir = DATA_ROOT/split/lbl
-            plot_base = DATA_ROOT/'plots'/split/lbl if args.plot else None
+            plot_base = PLOT_DIR/split/lbl if args.plot else None
             for wav in sorted(wav_dir.glob('*.wav')):
                 spec = wav.with_suffix('.npy')
                 mask = wav.with_suffix('.mask.npy')
@@ -262,9 +262,16 @@ def main() -> None:
         val_files.extend(sorted((DATA_ROOT/'validation'/lbl).glob('*.npy')))
     val_files = [f for f in val_files if not f.name.endswith('.mask.npy')]
 
+    test_files = []
+    for lbl in ('HC_AH','PD_AH'):
+        test_files += sorted((DATA_ROOT/'test'/lbl).glob('*.npy'))
+    test_files = [f for f in test_files if not f.name.endswith('.mask.npy')]
+
     train_dl = DataLoader(MelSpecDataset(train_files), batch_size=BATCH_SIZE,
                           shuffle=True, num_workers=NUM_WORKERS)
     val_dl   = DataLoader(MelSpecDataset(val_files),   batch_size=BATCH_SIZE,
+                          shuffle=False, num_workers=NUM_WORKERS)
+    test_dl  = DataLoader(MelSpecDataset(test_files), batch_size=BATCH_SIZE,
                           shuffle=False, num_workers=NUM_WORKERS)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -299,9 +306,30 @@ def main() -> None:
     plot_confusion_matrix(final['cm'], STATS_DIR/"confusion_matrix.png")
     plot_roc_curve(final['y_true'], final['probs'], STATS_DIR/"roc_curve.png")
 
-    # STATS CSV
-    df = pd.DataFrame({k:[final[k]] for k in ['acc','precision','recall','f1','roc_auc']})
-    df.to_csv(STATS_DIR/"metrics.csv", index=False)
+    # 7) TEST RESULTS (load best model)
+    best_ckpt = CHECKPOINT_DIR / f"best_auc_{best_auc:.3f}.pt"
+
+    # torch.load in 2.6+ defaults to weights_only=True which rejects numpy scalars.
+    # We need weights_only=False so it will load the entire dict, then pick out the state_dict.
+    ckpt_data = torch.load(best_ckpt, map_location=device, weights_only=False)
+
+    # if you saved a dict with 'model_state_dict', grab that, otherwise assume it's the raw state_dict
+    if isinstance(ckpt_data, dict) and 'model_state_dict' in ckpt_data:
+        state_dict = ckpt_data['model_state_dict']
+    else:
+        state_dict = ckpt_data
+
+    model.load_state_dict(state_dict)
+    test_metrics = evaluate(model, test_dl, device)
+    print("\n--- TEST METRICS ---")
+    for k,v in test_metrics.items():
+        if not isinstance(v, np.ndarray):
+            print(f"{k:10}: {v:.4f}")
+    plot_confusion_matrix(test_metrics['cm'], STATS_DIR/"test_confusion_matrix.png")
+    plot_roc_curve(test_metrics['y_true'], test_metrics['probs'], STATS_DIR/"test_roc_curve.png")
+    pd.DataFrame({k:[test_metrics[k]] for k in ('acc','precision','recall','f1','roc_auc')}) \
+      .to_csv(STATS_DIR/"test_metrics.csv", index=False)
+
     print("Done.")
 
 # MAIN END
