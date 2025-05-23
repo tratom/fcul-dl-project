@@ -282,7 +282,7 @@ def main() -> None:
         metrics = evaluate(model, val_dl, device)
         if not np.isnan(metrics['roc_auc']) and metrics['roc_auc'] > best_auc:
             best_auc = metrics['roc_auc']
-            ckpt = CHECKPOINT_DIR / f"fold{fold+1}_best_auc_{best_auc:.3f}.pt"
+            ckpt = CHECKPOINT_DIR / f"best_auc_{best_auc:.3f}.pt"
             torch.save({
                 'epoch': epoch,
                 'model_state_dict': model.state_dict(),
