@@ -1,0 +1,5 @@
+85 HC (41 + 44 (2 x ogni paziente))
+95 PD (40 + 45 (2 x ogni paziente))
+tot 180
+
+con augmentation 180 x 5 = 900

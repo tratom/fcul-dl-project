@@ -95,9 +95,10 @@ def cache_all_windows(plot: bool = False):
     for wav, _ in list_wav_files():
         y, _ = librosa.load(wav, sr=SAMPLE_RATE)
         y = librosa.util.normalize(y)
+        y, _ = librosa.effects.trim(y, top_db=35)  # trim silence
 
         melspec = librosa.feature.melspectrogram(
-            y, sr=SAMPLE_RATE, n_mels=N_MELS,
+            y=y, sr=SAMPLE_RATE, n_mels=N_MELS,
             hop_length=HOP_LENGTH, win_length=WIN_LENGTH,
             fmin=FMIN, fmax=FMAX, power=2.0,
         )

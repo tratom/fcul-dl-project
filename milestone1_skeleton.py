@@ -101,6 +101,7 @@ def load_and_preprocess(path: Path) -> np.ndarray:
     """Load wav and compute a padded / truncated log-mel spectrogram (T × M)."""
     y, sr = librosa.load(path, sr=SAMPLE_RATE)
     y = librosa.util.normalize(y)
+    y, _ = librosa.effects.trim(y, top_db=35)  # trim silence
     melspec = librosa.feature.melspectrogram(
         y=y,
         sr=sr,
@@ -143,18 +144,18 @@ def slice_into_windows(spec: np.ndarray) -> list[np.ndarray]:
 
 
 def cache_all(plot: bool = False):
-    """Pre-compute *window* spectrograms and save each one as its own .npy file."""
+    """Pre-compute spectrograms once; safe to skip on subsequent runs."""
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    PLOT_DIR.mkdir(parents=True, exist_ok=True)
     for wav, _ in list_wav_files():
-        label_prefix = wav.parent.name.split("_")[0]          # HC / PD
-        spec = load_and_preprocess(wav)                       # full clip (T×M)
-        for idx, win in enumerate(slice_into_windows(spec)):
-            out = CACHE_DIR / f"{label_prefix}_{wav.stem}_{idx:02d}.npy"
-            if not out.exists():
-                np.save(out, win)
-                if plot:
-                    plot_spectrogram(win, wav, f"{label_prefix}_{idx:02d}")
-    print("[cache_all] Window caching DONE")
+        label_prefix = wav.parent.name.split("_")[0]  # "HC" or "PD"
+        out = CACHE_DIR / f"{label_prefix}_{wav.stem}.npy"
+        if not out.exists():
+            spec = load_and_preprocess(wav)
+            np.save(out, spec)
+            if plot:
+                plot_spectrogram(spec, wav, label_prefix)
+    print("[cache_all] Spectrogram caching DONE")
 
 
 

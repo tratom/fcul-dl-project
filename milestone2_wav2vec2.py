@@ -49,7 +49,7 @@ from transformers.optimization import get_scheduler
 import inspect, transformers
 
 # ---------- FOLDER CONFIG ----------
-DATA_ROOT      = Path("data-source/audio")
+DATA_ROOT      = Path("train-test-split") # Path("data-source/audio") # 
 CHECKPOINT_DIR = Path("artifacts/checkpoints")
 PLOT_DIR       = Path("artifacts/plots")
 STATS_DIR      = Path("artifacts/stats")
@@ -77,6 +77,9 @@ class PDVoiceDataset(Dataset):
         if sr != SAMPLE_RATE:
             wav = torchaudio.functional.resample(wav, sr, SAMPLE_RATE)
         wav = wav.mean(dim=0)            # mono
+
+        # Trim silence using VAD
+        wav = torchaudio.functional.vad(wav.unsqueeze(0), SAMPLE_RATE).squeeze(0)
 
         # mild augmentation
         if self.augment:
@@ -239,10 +242,10 @@ def freeze_bottom_layers(model, pct):
             for p in layer.parameters():
                 p.requires_grad = False
 
-def list_audio_files() -> list[Path]:
+def list_audio_files(sub_path: Path = Path()) -> list[Path]:
     files = []
     for sub in ("HC_AH", "PD_AH"):
-        files.extend((DATA_ROOT / sub).glob("*.wav"))
+        files.extend((DATA_ROOT / sub_path / sub).glob("*.wav"))
     return sorted(files, key=lambda p: p.name)
 
 # ---------- MAIN ----------
@@ -271,16 +274,20 @@ def main():
     print("------------------------------------------")
 
     # ----- data split -----
-    all_files = list_audio_files()
-    labels = [0 if f.parent.name.startswith("HC") else 1 for f in all_files]
-    train_f, val_f = train_test_split(
-        all_files, test_size=0.3,
-        stratify=labels, random_state=RANDOM_SEED
-    )
+    # all_files = list_audio_files()
+    # labels = [0 if f.parent.name.startswith("HC") else 1 for f in all_files]
+    # train_f, val_f = train_test_split(
+    #     all_files, test_size=0.3,
+    #     stratify=labels, random_state=RANDOM_SEED
+    # )
+    train_f = list_audio_files(Path("training"))
+    val_f   = list_audio_files(Path("validation"))
 
     processor = Wav2Vec2Processor.from_pretrained(MODEL_ID, do_normalize=False)
     train_ds = PDVoiceDataset(train_f, processor, augment=False)#True)
     val_ds   = PDVoiceDataset(val_f,   processor, augment=False)
+    print("[INFO] Number of training observation found:", len(train_ds))
+    print("[INFO] Number of validation observation found:", len(val_ds))
 
     learning_rate = 5e-4 if torch.cuda.is_available() else 1e-5
 
