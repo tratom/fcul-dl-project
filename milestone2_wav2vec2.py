@@ -84,19 +84,19 @@ class PDVoiceDataset(Dataset):
                 wav = wav * random.uniform(0.9, 1.1)
             if random.random() < 0.3:        # white noise
                 wav = wav + 0.005 * torch.randn_like(wav)
-
-        # pad / truncate
-        if len(wav) < self.max_len:
-            wav = torch.nn.functional.pad(wav, (0, self.max_len - len(wav)))
-        else:
-            wav = wav[: self.max_len]
+                
         return wav
 
     def __len__(self): return len(self.files)
 
     def __getitem__(self, idx):
         wav = self._load_audio(self.files[idx])
-        length = len(wav)                            # after pad / truncate
+        length = len(wav)                            # before pad / truncate
+        # pad / truncate
+        if len(wav) < self.max_len:
+            wav = torch.nn.functional.pad(wav, (0, self.max_len - len(wav)))
+        else:
+            wav = wav[: self.max_len]
         mask   = torch.zeros(self.max_len, dtype=torch.long)
         mask[: length] = 1                           # 1 = real audio, 0 = padding
 
