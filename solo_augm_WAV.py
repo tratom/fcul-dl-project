@@ -68,39 +68,31 @@ def generate_offline_augmentations(orig_paths: List[Path], output_dir: Path) -> 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Solo DataAugmentation Audio: generazione offline delle augmentazioni per il training set"
+        description="DataAugmentation Audio: generazione offline delle augmentazioni per training, validation e test"
     )
     parser.add_argument(
-        "--data-root", type=Path, default=Path("data-source/audio"),
-        help="Cartella con sottocartelle HC_AH e PD_AH contenenti WAV originali"
+        "--data-root", type=Path, default=Path("data"),
+        help="Cartella con sottocartelle training, validation, test (ognuna con HC_AH e PD_AH)"
     )
     parser.add_argument(
-        "--out-dir", type=Path, default=Path("artifacts/augmented_audio"),
+        "--out-dir", type=Path, default=Path("data_augmented"),
         help="Cartella di destinazione per i WAV augmentati"
-    )
-    parser.add_argument(
-        "--test-size", type=float, default=0.3,
-        help="Frazione di file originali da tenere per validation (no augmentazioni)"
     )
     args = parser.parse_args()
 
-    # 1) Lista dei file originali
-    orig_paths: List[Path] = []
-    for label in ["HC_AH", "PD_AH"]:
-        orig_paths += sorted((args.data_root / label).glob("*.wav"))
+    splits = ["training", "validation", "test"]
+    for split in splits:
+        # Raccogli file originali per questo split
+        orig_paths: list[Path] = []
+        split_dir = args.data_root / split
+        for label in ["HC_AH", "PD_AH"]:
+            orig_paths += sorted((split_dir / label).glob("*.wav"))
 
-    # 2) Split train/validation sui file originali
-    labels = [0 if p.parent.name == "HC_AH" else 1 for p in orig_paths]
-    train_orig, val_orig = train_test_split(
-        orig_paths, test_size=args.test_size,
-        stratify=labels, random_state=RANDOM_SEED
-    )
-
-    # 3) Genera augmentazioni SOLO per il training set
-    print(f"Generazione augmentazioni per {len(train_orig)} file di training...")
-    generate_offline_augmentations(train_orig, args.out_dir)
-    print("Augmentazioni completate.")
-    print(f"Training originals: {len(train_orig)}, Validation originals (no augment): {len(val_orig)}")
+        # Directory di output per questo split
+        split_out = args.out_dir / split
+        print(f"Generazione augmentazioni per il split '{split}' ({len(orig_paths)} file)...")
+        generate_offline_augmentations(orig_paths, split_out)
+        print(f"Augmentazioni completate per '{split}'.\n")
 
 if __name__ == "__main__":
     main()
