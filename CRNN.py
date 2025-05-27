@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+"""
+Early Parkinson's Detection Using Speech Analysis - Milestone 2
+Cleaned version: no augmentation generation or specaugment.
+"""
 from __future__ import annotations
 import argparse
 import os
@@ -23,11 +28,11 @@ from sklearn.metrics import (
     roc_auc_score,
     roc_curve,
 )
-from sklearn.model_selection import train_test_split, GroupKFold, StratifiedKFold
+from sklearn.model_selection import StratifiedKFold
 
 # -------------------- CONFIG --------------------
 
-DATA_ROOT      = Path("data-source/audio")
+DATA_ROOT      = Path("data_original+aug") # Path("data-source/audio")
 AUG_DIR        = Path("artifacts/augmented_audio")
 PLOT_DIR       = Path("milestone2/plots_augmented")
 CHECKPOINT_DIR = Path("milestone2/checkpoints_augmented")
@@ -42,117 +47,87 @@ WIN_LENGTH  = 400
 FMIN        = 50
 FMAX        = 4_000
 MAX_FRAMES  = 1_024
+SPEC_PAD_VALUE = -80.0
 
 RANDOM_SEED = 42
 BATCH_SIZE  = 8
 NUM_WORKERS = os.cpu_count() or 2
 EPSILON     = 0.1
 
-feat_df = pd.read_csv("artifacts/vsp_all_features22.csv")
-feature_columns = ['meanF0','stdevF0','hnr','localJitter','localabsoluteJitter','rapJitter','ppq5Jitter','ddpJitter','localShimmer','localdbShimmer','apq3Shimmer','apq5Shimmer','apq11Shimmer','ddaShimmer']  # <-- tutte le colonne numeriche che vuoi
-feature_dict = {
-    row['filename']: row[feature_columns].to_numpy(dtype=np.float32)
-    for _, row in feat_df.iterrows()
-}
-
-class SpecAugment(nn.Module):
-    def __init__(
-        self,
-        max_time_mask: int = 10,
-        max_freq_mask: int = 8,
-        n_time_masks: int = 1,
-        n_freq_masks: int = 1,
-    ):
-        super().__init__()
-        self.max_time_mask = max_time_mask
-        self.max_freq_mask = max_freq_mask
-        self.n_time_masks  = n_time_masks
-        self.n_freq_masks  = n_freq_masks
-    def forward(self, spec: torch.Tensor) -> torch.Tensor:
-        F, T = spec.shape
-        spec_aug = spec.clone()
-        for _ in range(self.n_time_masks):
-            t  = random.randint(1, self.max_time_mask)
-            t0 = random.randint(0, T - t)
-            spec_aug[:, t0:t0+t] = 0
-        for _ in range(self.n_freq_masks):
-            f  = random.randint(1, self.max_freq_mask)
-            f0 = random.randint(0, F - f)
-            spec_aug[f0:f0+f, :] = 0
-        return spec_aug
-
-
-
-def load_and_preprocess(path: Path, feature_dict: dict[str, np.ndarray] | None = None) -> np.ndarray:
-    if path.suffix == '.npy':
-        y = np.load(path)
-    else:
-        y, _ = librosa.load(path, sr=SAMPLE_RATE)
-    y, _ = librosa.effects.trim(y, top_db=25)  # ✅ trim silence
+# -------------------- PREPROCESSING --------------------
+def load_and_preprocess(
+    wav_path: Path,
+    spec_path: Path,
+    mask_path: Path,
+    plot_path: Path | None,
+    do_plot: bool
+) -> None:
+    if spec_path.exists() and mask_path.exists() and (not do_plot or (plot_path and plot_path.exists())):
+        return
+    y, _ = librosa.load(str(wav_path), sr=SAMPLE_RATE)
     y = librosa.util.normalize(y)
+    y, _ = librosa.effects.trim(y, top_db=35)
     melspec = librosa.feature.melspectrogram(
-        y=y, sr=SAMPLE_RATE, n_mels=N_MELS,
-        hop_length=HOP_LENGTH, win_length=WIN_LENGTH,
-        fmin=FMIN, fmax=FMAX, power=2.0,
+        y=y, sr=SAMPLE_RATE,
+        n_mels=N_MELS,
+        hop_length=HOP_LENGTH,
+        win_length=WIN_LENGTH,
+        fmin=FMIN, fmax=FMAX,
+        power=2.0
     )
     logmel = librosa.power_to_db(melspec, ref=np.max).astype(np.float32)
-    delta = librosa.feature.delta(logmel)
+    delta  = librosa.feature.delta(logmel)
     delta2 = librosa.feature.delta(logmel, order=2)
-    full = np.stack([logmel, delta, delta2], axis=0)  # ✅ 3-channel
-    if full.shape[2] >= MAX_FRAMES:
+    full   = np.stack([logmel, delta, delta2], axis=0)
+    T = full.shape[2]
+    if T >= MAX_FRAMES:
         full = full[:, :, :MAX_FRAMES]
+        mask = np.ones(MAX_FRAMES, dtype=np.uint8)
     else:
-        pad_w = MAX_FRAMES - full.shape[2]
-        full = np.pad(full, ((0,0),(0,0),(0,pad_w)), constant_values=-80.0)
-    
-    if feature_dict is not None:
-     key = path.name.replace('.npy', '.wav')  # più robusto
-     if key in feature_dict:
-        static_features = feature_dict[key]  # shape (n_features,)
-        target_shape = full.shape[1:]        # (F, MAX_FRAMES)
-        static_channels = np.stack(
-            [np.full(target_shape, f, dtype=np.float32) for f in static_features],
-            axis=0
-        )
-        full = np.concatenate([full, static_channels], axis=0)
-
-    return full 
-
-
+        pad = MAX_FRAMES - T
+        full = np.pad(full, ((0,0),(0,0),(0,pad)), constant_values=SPEC_PAD_VALUE)
+        mask = np.concatenate([np.ones(T, dtype=np.uint8), np.zeros(pad, dtype=np.uint8)])
+    spec_path.parent.mkdir(parents=True, exist_ok=True)
+    mask_path.parent.mkdir(parents=True, exist_ok=True)
+    np.save(spec_path, full)
+    np.save(mask_path, mask)
+    if do_plot and plot_path:
+        plot_path.parent.mkdir(parents=True, exist_ok=True)
+        if not plot_path.exists():
+            plt.figure(figsize=(10,4))
+            librosa.display.specshow(
+                logmel, sr=SAMPLE_RATE, hop_length=HOP_LENGTH,
+                x_axis='time', y_axis='mel', fmin=FMIN, fmax=FMAX
+            )
+            plt.colorbar(format='%+2.0f dB')
+            plt.tight_layout()
+            plt.savefig(plot_path)
+            plt.close()
 
 class MelSpecDataset(Dataset):
-    def __init__(self, files: List[Path], specaugment: SpecAugment | None = None, feature_dict: dict[str, np.ndarray] | None = None):
+    def __init__(self, files: List[Path]):
         self.files = files
         self.labels = [0 if f.parent.name=='HC_AH' else 1 for f in files]
-        self.specaugment = specaugment
-        self.feature_dict = feature_dict
-
     def __len__(self) -> int:
         return len(self.files)
-
     def __getitem__(self, idx: int) -> Tuple[torch.Tensor, torch.Tensor]:
-        spec_np = load_and_preprocess(self.files[idx], self.feature_dict)  # <--- pass dictionary
-        spec_t = torch.from_numpy(spec_np)
+        spec = np.load(str(self.files[idx]))              # (3, N_MELS, MAX_FRAMES)
+        mask = np.load(str(self.files[idx].with_suffix('.mask.npy')))
+        x = torch.from_numpy(spec)                        # float32
+        y = torch.tensor(self.labels[idx], dtype=torch.float32)
+        return x, y
 
-        if self.specaugment:
-            for i in range(3):  # solo logmel/delta/delta²
-                spec_t[i] = self.specaugment(spec_t[i])
-
-        spec_t = spec_t.permute(1, 2, 0)  # (F, T, C) → (T, F, C)
-        label = torch.tensor(self.labels[idx], dtype=torch.float32)
-        return spec_t, label
-
-
+# -------------------- MODEL --------------------
 class CRNNClassifier(nn.Module):
-    def __init__(self, n_mels: int = N_MELS, hidden_size: int = 128, in_channels: int = 3):
+    def __init__(self, n_mels: int = N_MELS, hidden_size: int = 128):
         super().__init__()
         self.cnn = nn.Sequential(
-            nn.Conv2d(in_channels, 16, kernel_size=3, padding=1),
-            nn.BatchNorm2d(16), nn.ReLU(), nn.MaxPool2d((2, 2)),
+            nn.Conv2d(3, 16, kernel_size=3, padding=1),
+            nn.BatchNorm2d(16), nn.ReLU(), nn.MaxPool2d((2,2)),
             nn.Conv2d(16, 32, kernel_size=3, padding=1),
-            nn.BatchNorm2d(32), nn.ReLU(), nn.MaxPool2d((2, 2)),
+            nn.BatchNorm2d(32), nn.ReLU(), nn.MaxPool2d((2,2)),
             nn.Conv2d(32, 64, kernel_size=3, padding=1),
-            nn.BatchNorm2d(64), nn.ReLU(), nn.MaxPool2d((2, 2))
+            nn.BatchNorm2d(64), nn.ReLU(), nn.MaxPool2d((2,2))
         )
         self.lstm = nn.LSTM(
             input_size=64 * (n_mels // 8),
@@ -168,12 +143,11 @@ class CRNNClassifier(nn.Module):
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        # x shape: (B, T, F, C)
-        x = x.permute(0, 3, 2, 1)  # → (B, C, F, T)
-        x = self.cnn(x)            # → (B, 64, F', T')
-        x = x.permute(0, 3, 1, 2)  # → (B, T', 64, F')
+        # x = x.permute(0, 3, 2, 1)
+        x = self.cnn(x)
+        x = x.permute(0, 3, 1, 2)
         B, T, C, F = x.shape
-        x = x.reshape(B, T, C * F) # → (B, T', 64 × F')
+        x = x.reshape(B, T, C * F)
         out, _ = self.lstm(x)
         out_max, _ = torch.max(out, dim=1)
         out_avg = torch.mean(out, dim=1)
@@ -181,8 +155,7 @@ class CRNNClassifier(nn.Module):
         out = self.dropout(out)
         return self.classifier(out).squeeze(1)
 
-
-# -------------------- Metrics & plots --------------------
+# -------------------- METRICS --------------------
 def evaluate(model: nn.Module, loader: DataLoader, device='cpu') -> dict:
     preds, labels, probs = [], [], []
     model.eval()
@@ -196,7 +169,6 @@ def evaluate(model: nn.Module, loader: DataLoader, device='cpu') -> dict:
     y_true = np.concatenate(labels)
     y_prob = np.concatenate(probs)
 
-    # Threshold tuning
     prec, rec, thresholds = precision_recall_curve(y_true, y_prob)
     f1_scores = 2 * prec * rec / (prec + rec + 1e-8)
     best_idx = np.argmax(f1_scores)
@@ -209,15 +181,12 @@ def evaluate(model: nn.Module, loader: DataLoader, device='cpu') -> dict:
     )
     return {
         'acc': accuracy_score(y_true, y_pred),
-        'precision': prec,
-        'recall': rec,
-        'f1': f1,
+        'precision': prec, 'recall': rec, 'f1': f1,
         'roc_auc': roc_auc_score(y_true, y_prob),
         'cm': confusion_matrix(y_true, y_pred),
-        'y_true': y_true,
-        'probs': y_prob,
-        'threshold': best_thresh
+        'y_true': y_true, 'probs': y_prob, 'threshold': best_thresh
     }
+
 
 def plot_confusion_matrix(cm: np.ndarray, path: Path) -> None:
     plt.figure(figsize=(4,4)); plt.imshow(cm, cmap='Blues'); plt.title('Confusion Matrix');
@@ -238,7 +207,7 @@ def plot_roc_curve(y_true: np.ndarray, probs: np.ndarray, path: Path) -> None:
     plt.xlabel('False Positive Rate'); plt.ylabel('True Positive Rate');
     plt.title(f'ROC Curve (AUC={auc:.3f})'); plt.tight_layout(); plt.savefig(path); plt.close()
 
-# -------------------- Training helper --------------------
+# -------------------- TRAINING HELPER --------------------
 def step_epoch(
     model: nn.Module, loader: DataLoader,
     criterion: nn.Module, optimizer: torch.optim.Optimizer|None,
@@ -246,109 +215,124 @@ def step_epoch(
 ) -> Tuple[float, float]:
     is_train = optimizer is not None
     model.train() if is_train else model.eval()
-    total_loss,correct,samples = 0.0,0,0
-    for x,y in loader:
-        x,y = x.to(device),y.to(device)
+    total_loss, correct, samples = 0.0, 0, 0
+    for x, y in loader:
+        x, y = x.to(device), y.to(device)
         if is_train: optimizer.zero_grad()
-        y_s = y*(1-epsilon) + 0.5*epsilon
+        y_s = y * (1 - epsilon) + 0.5 * epsilon
         logits = model(x)
-        loss   = criterion(logits,y_s)
-        if is_train: loss.backward(); optimizer.step()
-        preds  = (torch.sigmoid(logits)>0.5).float()
-        correct+= (preds==y).sum().item(); samples+=y.size(0);
-        total_loss += loss.item()*y.size(0)
-    return total_loss/samples, correct/samples
+        loss = criterion(logits, y_s)
+        if is_train:
+            loss.backward()
+            optimizer.step()
+        preds = (torch.sigmoid(logits) > 0.5).float()
+        correct += (preds == y).sum().item()
+        samples += y.size(0)
+        total_loss += loss.item() * y.size(0)
+    return total_loss / samples, correct / samples
 
-
+# -------------------- MAIN --------------------
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument('-e', '--epochs', type=int, default=10)
+    parser.add_argument('-e','--epochs',type=int,default=10)
+    parser.add_argument('--plot', action='store_true')
     args = parser.parse_args()
 
     print(f"EXECUTION TIME: {datetime.now():%Y-%m-%d %H:%M:%S}")
 
-    orig_paths = []
-    for lbl in ('HC_AH', 'PD_AH'):
-        orig_paths.extend(sorted((DATA_ROOT / lbl).glob('*.wav')))
-    labels_orig = [0 if p.parent.name == 'HC_AH' else 1 for p in orig_paths]
+    # 1) PREPROCESS (now including test)
+    for split in ('training','validation','test'):
+        for lbl in ('HC_AH','PD_AH'):
+            wav_dir = DATA_ROOT/split/lbl
+            plot_base = PLOT_DIR/split/lbl if args.plot else None
+            for wav in sorted(wav_dir.glob('*.wav')):
+                spec = wav.with_suffix('.npy')
+                mask = wav.with_suffix('.mask.npy')
+                plot = plot_base/f"{wav.stem}.png" if plot_base else None
+                load_and_preprocess(wav, spec, mask, plot, args.plot)
 
-    fold_metrics = []
-    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_SEED)
+    # LOAD training and validation files
+    train_files: List[Path] = []
+    for lbl in ('HC_AH','PD_AH'):
+        train_files.extend(sorted((DATA_ROOT/'training'/lbl).glob('*.npy')))
+    train_files = [f for f in train_files if not f.name.endswith('.mask.npy')]
 
-    for fold, (train_idx, val_idx) in enumerate(skf.split(orig_paths, labels_orig)):
-        print(f"\nFold {fold+1}/5")
-        train_orig = [orig_paths[i] for i in train_idx]
-        val_orig = [orig_paths[i] for i in val_idx]
+    val_files: List[Path] = []
+    for lbl in ('HC_AH','PD_AH'):
+        val_files.extend(sorted((DATA_ROOT/'validation'/lbl).glob('*.npy')))
+    val_files = [f for f in val_files if not f.name.endswith('.mask.npy')]
 
-        # File augmentati (in .npy)
-        train_files = list(train_orig)
-        for orig in train_orig:
-            label = orig.parent.name
-            npy_augments = sorted((Path("artifacts/augmented_audio_npy") / label).glob(f"{orig.stem}_*.npy"))
-            train_files.extend(npy_augments)
+    test_files = []
+    for lbl in ('HC_AH','PD_AH'):
+        test_files += sorted((DATA_ROOT/'test'/lbl).glob('*.npy'))
+    test_files = [f for f in test_files if not f.name.endswith('.mask.npy')]
 
-        val_files = list(val_orig)
+    train_dl = DataLoader(MelSpecDataset(train_files), batch_size=BATCH_SIZE,
+                          shuffle=True, num_workers=NUM_WORKERS)
+    val_dl   = DataLoader(MelSpecDataset(val_files),   batch_size=BATCH_SIZE,
+                          shuffle=False, num_workers=NUM_WORKERS)
+    test_dl  = DataLoader(MelSpecDataset(test_files), batch_size=BATCH_SIZE,
+                          shuffle=False, num_workers=NUM_WORKERS)
 
-        train_dl = DataLoader(
-            MelSpecDataset(train_files, SpecAugment(), feature_dict=feature_dict),
-            batch_size=BATCH_SIZE, shuffle=True, num_workers=NUM_WORKERS
-        )
-        val_dl = DataLoader(
-            MelSpecDataset(val_files, None, feature_dict=feature_dict),
-            batch_size=BATCH_SIZE, shuffle=False, num_workers=NUM_WORKERS
-        )
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = CRNNClassifier().to(device)
+    criterion = nn.BCEWithLogitsLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3)
 
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        in_channels = 3 + len(feature_columns)
-        model = CRNNClassifier(in_channels=in_channels).to(device)
-        criterion = nn.BCEWithLogitsLoss()
-        optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3, factor=0.5)
+    best_auc = -np.inf
+    for epoch in range(1, args.epochs+1):
+        tr_loss, tr_acc = step_epoch(model, train_dl, criterion, optimizer, device, EPSILON)
+        val_loss, val_acc = step_epoch(model, val_dl, criterion, None, device, 0.0)
+        scheduler.step(val_loss)
+        print(f"Epoch {epoch:02d} | train acc {tr_acc:.3f} | val acc {val_acc:.3f} | train loss {tr_loss:.3f} | val loss {val_loss:.3f}")
+        metrics = evaluate(model, val_dl, device)
+        if not np.isnan(metrics['roc_auc']) and metrics['roc_auc'] > best_auc:
+            best_auc = metrics['roc_auc']
+            ckpt = CHECKPOINT_DIR / f"best_auc_{best_auc:.3f}.pt"
+            torch.save({
+                'epoch': epoch,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'metrics': metrics
+            }, ckpt)
+            print(f"[CHECKPOINT] Saved {ckpt.name}")
 
-        best_auc = -1.0
-        for epoch in range(1, args.epochs + 1):
-            tr_loss, tr_acc = step_epoch(model, train_dl, criterion, optimizer, device, EPSILON)
-            val_loss, val_acc = step_epoch(model, val_dl, criterion, None, device, 0.0)
-            scheduler.step(val_loss)
-            print(f"Epoch {epoch:02d} | train acc {tr_acc:.3f} | val acc {val_acc:.3f} | train loss {tr_loss:.3f} | val loss {val_loss:.3f}")
-            metrics = evaluate(model, val_dl, device)
-            if not np.isnan(metrics['roc_auc']) and metrics['roc_auc'] > best_auc:
-                best_auc = metrics['roc_auc']
-                ckpt = CHECKPOINT_DIR / f"fold{fold+1}_best_auc_{best_auc:.3f}.pt"
-                torch.save({
-                    'epoch': epoch,
-                    'model_state_dict': model.state_dict(),
-                    'optimizer_state_dict': optimizer.state_dict(),
-                    'metrics': metrics
-                }, ckpt)
-                print(f"[CHECKPOINT] Saved {ckpt.name}")
+    # FINAL EVAL
+    final = evaluate(model, val_dl, device)
+    print("--- FINAL METRICS ---")
+    for k,v in final.items():
+        if not isinstance(v, np.ndarray): print(f"{k:10}: {v}")
+    plot_confusion_matrix(final['cm'], STATS_DIR/"confusion_matrix.png")
+    plot_roc_curve(final['y_true'], final['probs'], STATS_DIR/"roc_curve.png")
 
-        final = evaluate(model, val_dl, device)
-        print("--- FINAL METRICS ---")
-        for k, v in final.items():
-            if not isinstance(v, np.ndarray): print(f"{k:10}: {v}")
-        plot_confusion_matrix(final['cm'], STATS_DIR / f'fold{fold+1}_confusion_matrix.png')
-        plot_roc_curve(final['y_true'], final['probs'], STATS_DIR / f'fold{fold+1}_roc_curve.png')
-        print("Plots saved for fold.")
-        fold_metrics.append(final)
+    # 7) TEST RESULTS (load best model)
+    best_ckpt = CHECKPOINT_DIR / f"best_auc_{best_auc:.3f}.pt"
 
-    print("\n===== AVERAGE METRICS ACROSS FOLDS =====")
-    keys = [k for k in fold_metrics[0].keys() if isinstance(fold_metrics[0][k], (int, float))]
-    avg = {k: np.mean([m[k] for m in fold_metrics]) for k in keys}
-    for k, v in avg.items():
-        print(f"{k:10}: {v:.4f}")
+    # torch.load in 2.6+ defaults to weights_only=True which rejects numpy scalars.
+    # We need weights_only=False so it will load the entire dict, then pick out the state_dict.
+    ckpt_data = torch.load(best_ckpt, map_location=device, weights_only=False)
 
-    df = pd.DataFrame([{k: v for k, v in m.items() if k in keys} for m in fold_metrics])
-    df.loc['mean'] = df.mean(numeric_only=True)
-    df.to_csv(STATS_DIR / 'cv_metrics_summary.csv', index_label='fold')
+    # if you saved a dict with 'model_state_dict', grab that, otherwise assume it's the raw state_dict
+    if isinstance(ckpt_data, dict) and 'model_state_dict' in ckpt_data:
+        state_dict = ckpt_data['model_state_dict']
+    else:
+        state_dict = ckpt_data
 
-    plt.figure(figsize=(8, 4))
-    df.mean(numeric_only=True).plot(kind='bar', yerr=df.std(numeric_only=True), capsize=4)
-    plt.title('Average Metrics Across Folds')
-    plt.ylabel('Score')
-    plt.tight_layout()
-    plt.savefig(STATS_DIR / 'cv_metrics_barplot.png')
-    plt.close()
+    model.load_state_dict(state_dict)
+    test_metrics = evaluate(model, test_dl, device)
+    print("\n--- TEST METRICS ---")
+    for k,v in test_metrics.items():
+        if not isinstance(v, np.ndarray):
+            print(f"{k:10}: {v:.4f}")
+    plot_confusion_matrix(test_metrics['cm'], STATS_DIR/"test_confusion_matrix.png")
+    plot_roc_curve(test_metrics['y_true'], test_metrics['probs'], STATS_DIR/"test_roc_curve.png")
+    pd.DataFrame({k:[test_metrics[k]] for k in ('acc','precision','recall','f1','roc_auc')}) \
+      .to_csv(STATS_DIR/"test_metrics.csv", index=False)
+
+    print("Done.")
+
+# MAIN END
 
 if __name__ == '__main__':
     main()
