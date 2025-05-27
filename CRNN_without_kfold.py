@@ -277,7 +277,7 @@ def main() -> None:
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = CRNNClassifier().to(device)
     criterion = nn.BCEWithLogitsLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-5)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=3)
 
     best_auc = -np.inf

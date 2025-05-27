@@ -173,3 +173,4 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 .Identifier
+milestone2/checkpoints_augmented/best_auc/
