@@ -49,7 +49,7 @@ from transformers.optimization import get_scheduler
 import inspect, transformers
 
 # ---------- FOLDER CONFIG ----------
-DATA_ROOT      = Path("train-test-split") # Path("data-source/audio") # 
+DATA_ROOT      = Path("data-source/audio") # Path("train-test-split") # Path("data-source/audio") # 
 CHECKPOINT_DIR = Path("artifacts/checkpoints")
 PLOT_DIR       = Path("artifacts/plots")
 STATS_DIR      = Path("artifacts/stats")
@@ -274,14 +274,14 @@ def main():
     print("------------------------------------------")
 
     # ----- data split -----
-    # all_files = list_audio_files()
-    # labels = [0 if f.parent.name.startswith("HC") else 1 for f in all_files]
-    # train_f, val_f = train_test_split(
-    #     all_files, test_size=0.3,
-    #     stratify=labels, random_state=RANDOM_SEED
-    # )
-    train_f = list_audio_files(Path("training"))
-    val_f   = list_audio_files(Path("validation"))
+    all_files = list_audio_files()
+    labels = [0 if f.parent.name.startswith("HC") else 1 for f in all_files]
+    train_f, val_f = train_test_split(
+        all_files, test_size=0.3,
+        stratify=labels, random_state=RANDOM_SEED
+    )
+    # train_f = list_audio_files(Path("training"))
+    # val_f   = list_audio_files(Path("validation"))
 
     processor = Wav2Vec2Processor.from_pretrained(MODEL_ID, do_normalize=False)
     train_ds = PDVoiceDataset(train_f, processor, augment=False)#True)
@@ -374,9 +374,15 @@ def main():
     metrics["confusion_matrix"] = cm.tolist()
 
     # save best checkpoint path + metrics
+    metrics["y_true"] = y_true.tolist() if isinstance(y_true, np.ndarray) else list(y_true)
+    metrics["y_score"] = y_prob.tolist() if isinstance(y_prob, np.ndarray) else list(y_prob)
+    
     best_ckpt = Path(trainer.state.best_model_checkpoint or CHECKPOINT_DIR)
     meta_path = best_ckpt / "eval_metrics.json"
     with open(meta_path, "w") as f:
+        json.dump(metrics, f, indent=2)
+    # optional: save also to stats folder for easy comparison
+    with open(STATS_DIR / "wav2vec2_metrics.json", "w") as f:
         json.dump(metrics, f, indent=2)
     print(f"[CHECKPOINT] Best model @ {best_ckpt}")
     print("--- FINAL VALIDATION METRICS ---")
