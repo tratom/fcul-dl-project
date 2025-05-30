@@ -20,6 +20,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
+from torch.utils.tensorboard import SummaryWriter
 from sklearn.metrics import (
     precision_recall_curve,
     accuracy_score,
@@ -28,7 +29,6 @@ from sklearn.metrics import (
     roc_auc_score,
     roc_curve,
 )
-from torch.utils.data import DataLoader, Dataset
 #from sklearn.model_selection import StratifiedKFold
 
 # -------------------- CONFIG --------------------
@@ -241,6 +241,12 @@ def main() -> None:
 
     print(f"EXECUTION TIME: {datetime.now():%Y-%m-%d %H:%M:%S}")
 
+    # TensorBoard writer
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    tb_log_dir = Path("artifacts/tb_logs") / timestamp
+    writer = SummaryWriter(log_dir=str(tb_log_dir))
+    print(f"[TensorBoard] logging to {tb_log_dir}")
+
     # 1) PREPROCESS (now including test)
     for split in ('training','validation','test'):
         for lbl in ('HC_AH','PD_AH'):
@@ -298,9 +304,19 @@ def main() -> None:
                 'metrics': metrics
             }, ckpt)
             print(f"[CHECKPOINT] Saved {ckpt.name}")
+        
+        # TensorBoard epoch scalars
+        writer.add_scalar('Loss/train', tr_loss, epoch)
+        writer.add_scalar('Loss/val', val_loss, epoch)
+        writer.add_scalar('Accuracy/train', tr_acc, epoch)
+        writer.add_scalar('Accuracy/val', val_acc, epoch)
+        writer.add_scalar('ROC AUC/val', metrics['roc_auc'], epoch)
+        writer.add_scalar('Precision/val', metrics['precision'], epoch)
 
     # FINAL EVAL
     final = evaluate(model, val_dl, device)
+    writer.add_scalar('Final/Accuracy_val', final['acc'], args.epochs)
+    writer.add_scalar('Final/ROC AUC_val', final['roc_auc'], args.epochs)
     print("--- FINAL METRICS ---")
     for k,v in final.items():
         if not isinstance(v, np.ndarray): print(f"{k:10}: {v}")
@@ -322,6 +338,11 @@ def main() -> None:
 
     model.load_state_dict(state_dict)
     test_metrics = evaluate(model, test_dl, device)
+    writer.add_scalar('Test/Accuracy', test_metrics['acc'], args.epochs)
+    writer.add_scalar('Test/ROC AUC', test_metrics['roc_auc'], args.epochs)
+
+    writer.close()
+
     print("\n--- TEST METRICS ---")
     for k,v in test_metrics.items():
         if not isinstance(v, np.ndarray):
